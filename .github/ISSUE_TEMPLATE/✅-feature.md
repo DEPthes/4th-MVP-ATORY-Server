@@ -1,6 +1,6 @@
 ---
 name: "✅ FEATURE"
-about: Feature 작업 사항을 입력해주세요
+about: Feature 작업 사항을 입력해주세요.
 title: "✅ 요약"
 labels: "\U0001F319 Feature"
 assignees: ''
