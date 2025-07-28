@@ -1,7 +1,7 @@
 ---
-name: "🐞 BUG"
+name: "\U0001F41E BUG"
 about: BUG 발생시 사용해주세요.
-title: "🐞 요약"
+title: "\U0001F41E 요약"
 labels: "\U0001F41E BUG"
 assignees: ''
 
