@@ -4,23 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d135d69a-4b2b-4d7f-8d7b-db196cab1204" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/4th-MVP-ATORY-Server.iml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/.gitattributes" beforeDir="false" afterPath="$PROJECT_DIR$/project-root/.gitattributes" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/project-root/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/project-root/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/gradle/wrapper/gradle-wrapper.jar" beforeDir="false" afterPath="$PROJECT_DIR$/project-root/gradle/wrapper/gradle-wrapper.jar" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/gradle/wrapper/gradle-wrapper.properties" beforeDir="false" afterPath="$PROJECT_DIR$/project-root/gradle/wrapper/gradle-wrapper.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/gradlew" beforeDir="false" afterPath="$PROJECT_DIR$/project-root/gradlew" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/gradlew.bat" beforeDir="false" afterPath="$PROJECT_DIR$/project-root/gradlew.bat" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/settings.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/project-root/settings.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/src/main/java/ATORY/main/MainApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/project-root/src/main/java/ATORY/atory/MainApplication.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/project-root/src/main/resources/application.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/src/test/java/ATORY/main/MainApplicationTests.java" beforeDir="false" afterPath="$PROJECT_DIR$/project-root/src/test/java/ATORY/atory/MainApplicationTests.java" afterDir="false" />
+    <list default="true" id="d135d69a-4b2b-4d7f-8d7b-db196cab1204" name="Changes" comment="[CHORE] 프로젝트 초기 구조">
+      <change afterPath="$PROJECT_DIR$/project-root/src/main/java/ATORY/atory/global/config/SwaggerConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/project-root/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/project-root/src/main/resources/application.properties" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -53,7 +40,22 @@
       </state>
     </system>
   </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="package-info" />
+        <option value="Enum" />
+        <option value="Interface" />
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
   <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="feature/swagger-setting" />
+      </map>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="ProjectColorInfo">{
@@ -61,6 +63,9 @@
   &quot;associatedIndex&quot;: 0
 }</component>
   <component name="ProjectId" id="30XF3LwK6AaCQslJmCYMpP4Of8S" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="1" id="Add" />
+  </component>
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -75,7 +80,7 @@
     "RequestMappingsPanelWidth1": "75",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "Spring Boot.MainApplication.executor": "Run",
-    "git-widget-placeholder": "main",
+    "git-widget-placeholder": "feature/architecture",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "/Users/judohyeon/workspace/4th-MVP-ATORY-Server",
     "node.js.detected.package.eslint": "true",
@@ -95,6 +100,11 @@
       <recent name="$PROJECT_DIR$" />
       <recent name="$PROJECT_DIR$/project-root/src/main/resources" />
       <recent name="$PROJECT_DIR$/project-root/src/main/java/ATORY" />
+    </key>
+    <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="ATORY.atory.global.exception" />
+      <recent name="ATORY.atory.global.dto" />
+      <recent name="ATORY.atory.global.config" />
     </key>
   </component>
   <component name="RunManager">
@@ -120,6 +130,13 @@
       <RunAsTest>false</RunAsTest>
       <method v="2" />
     </configuration>
+    <configuration name="MainApplication (1)" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <module name="project-root.main" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="ATORY.atory.MainApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="MainApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
       <module name="main.main" />
       <option name="SPRING_BOOT_MAIN_CLASS" value="ATORY.main.MainApplication" />
@@ -129,6 +146,7 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Gradle.4th-MVP-ATORY-Server [dependencies]" />
         <item itemvalue="Gradle.4th-MVP-ATORY-Server [dependencies]" />
       </list>
     </recent_temporary>
@@ -159,11 +177,148 @@
       <workItem from="1753771623781" duration="108000" />
       <workItem from="1753771743542" duration="49000" />
       <workItem from="1753771872543" duration="167000" />
-      <workItem from="1753772050628" duration="788000" />
+      <workItem from="1753772050628" duration="14960000" />
     </task>
+    <task id="LOCAL-00001" summary="[CHORE] 프로젝트 기본 세팅">
+      <option name="closed" value="true" />
+      <created>1753782875364</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1753782875364</updated>
+    </task>
+    <task id="LOCAL-00002" summary="[CHORE] 프로젝트 기본 세팅">
+      <option name="closed" value="true" />
+      <created>1753784452944</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1753784452944</updated>
+    </task>
+    <task id="LOCAL-00003" summary="[FEATURE] error exception 설정">
+      <option name="closed" value="true" />
+      <created>1753784627017</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1753784627017</updated>
+    </task>
+    <task id="LOCAL-00004" summary="[CHORE] 프로젝트 초기 설정">
+      <option name="closed" value="true" />
+      <created>1753810723083</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1753810723083</updated>
+    </task>
+    <task id="LOCAL-00005" summary="[FEATURE] 아카이브 구조 설정">
+      <option name="closed" value="true" />
+      <created>1753810769566</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1753810769566</updated>
+    </task>
+    <task id="LOCAL-00006" summary="[FEATURE] 청년 작가 구조 설정">
+      <option name="closed" value="true" />
+      <created>1753810789788</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1753810789788</updated>
+    </task>
+    <task id="LOCAL-00007" summary="[FEATURE] 청년 작가 노트 구조 설정">
+      <option name="closed" value="true" />
+      <created>1753810802062</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1753810802062</updated>
+    </task>
+    <task id="LOCAL-00008" summary="[FEATURE] 아트 컬렉터 구조 설정">
+      <option name="closed" value="true" />
+      <created>1753810813625</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1753810813625</updated>
+    </task>
+    <task id="LOCAL-00009" summary="[FEATURE] 팔로우 구조 설정">
+      <option name="closed" value="true" />
+      <created>1753810822049</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1753810822049</updated>
+    </task>
+    <task id="LOCAL-00010" summary="[FEATURE] 갤러리 구조 설정">
+      <option name="closed" value="true" />
+      <created>1753810831297</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1753810831297</updated>
+    </task>
+    <task id="LOCAL-00011" summary="[FEATURE] 게시물 구조 설정">
+      <option name="closed" value="true" />
+      <created>1753810841154</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1753810841154</updated>
+    </task>
+    <task id="LOCAL-00012" summary="[FEATURE] 게시물 구조 설정">
+      <option name="closed" value="true" />
+      <created>1753810845492</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1753810845492</updated>
+    </task>
+    <task id="LOCAL-00013" summary="[FEATURE] 태그 구조 설정">
+      <option name="closed" value="true" />
+      <created>1753810857307</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1753810857307</updated>
+    </task>
+    <task id="LOCAL-00014" summary="[FEATURE] 유저 구조 설정">
+      <option name="closed" value="true" />
+      <created>1753810865665</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1753810865665</updated>
+    </task>
+    <task id="LOCAL-00015" summary="[CHORE] 프로젝트 초기 구조">
+      <option name="closed" value="true" />
+      <created>1753810884188</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1753810884188</updated>
+    </task>
+    <option name="localTasksCounter" value="16" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="[CHORE] 프로젝트 기본 세팅" />
+    <MESSAGE value="[FEATURE] error exception 설정" />
+    <MESSAGE value="[CHORE] 프로젝트 초기 설정" />
+    <MESSAGE value="[FEATURE] 아카이브 구조 설정" />
+    <MESSAGE value="[FEATURE] 청년 작가 구조 설정" />
+    <MESSAGE value="[FEATURE] 청년 작가 노트 구조 설정" />
+    <MESSAGE value="[FEATURE] 아트 컬렉터 구조 설정" />
+    <MESSAGE value="[FEATURE] 팔로우 구조 설정" />
+    <MESSAGE value="[FEATURE] 갤러리 구조 설정" />
+    <MESSAGE value="[FEATURE] 게시물 구조 설정" />
+    <MESSAGE value="[FEATURE] 태그 구조 설정" />
+    <MESSAGE value="[FEATURE] 유저 구조 설정" />
+    <MESSAGE value="[CHORE] 프로젝트 초기 구조" />
+    <option name="LAST_COMMIT_MESSAGE" value="[CHORE] 프로젝트 초기 구조" />
   </component>
 </project>
