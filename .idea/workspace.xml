@@ -4,11 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d135d69a-4b2b-4d7f-8d7b-db196cab1204" name="Changes" comment="[CHORE] 프로젝트 기본 세팅">
+    <list default="true" id="d135d69a-4b2b-4d7f-8d7b-db196cab1204" name="Changes" comment="[FEATURE] error exception 설정">
       <change afterPath="$PROJECT_DIR$/project-root/src/main/java/ATORY/atory/global/config/SwaggerConfig.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/project-root/src/main/java/ATORY/atory/global/exception/GlobalExceptionHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/project-root/src/main/java/ATORY/atory/global/exception/GlobalExceptionHandler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/project-root/src/main/java/ATORY/atory/global/exception/MapperException.java" beforeDir="false" afterPath="$PROJECT_DIR$/project-root/src/main/java/ATORY/atory/global/exception/MapperException.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/project-root/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/project-root/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/project-root/src/main/java/ATORY/atory/domain/tag/service/TagService.java" beforeDir="false" afterPath="$PROJECT_DIR$/project-root/src/main/java/ATORY/atory/domain/tag/service/TagService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/project-root/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/project-root/src/main/resources/application.properties" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -45,6 +46,9 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="package-info" />
+        <option value="Enum" />
+        <option value="Interface" />
+        <option value="Class" />
       </list>
     </option>
   </component>
@@ -128,6 +132,13 @@
       <RunAsTest>false</RunAsTest>
       <method v="2" />
     </configuration>
+    <configuration name="MainApplication (1)" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <module name="project-root.main" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="ATORY.atory.MainApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="MainApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
       <module name="main.main" />
       <option name="SPRING_BOOT_MAIN_CLASS" value="ATORY.main.MainApplication" />
@@ -168,7 +179,7 @@
       <workItem from="1753771623781" duration="108000" />
       <workItem from="1753771743542" duration="49000" />
       <workItem from="1753771872543" duration="167000" />
-      <workItem from="1753772050628" duration="2286000" />
+      <workItem from="1753772050628" duration="14288000" />
     </task>
     <task id="LOCAL-00001" summary="[CHORE] 프로젝트 기본 세팅">
       <option name="closed" value="true" />
@@ -186,7 +197,15 @@
       <option name="project" value="LOCAL" />
       <updated>1753784452944</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="[FEATURE] error exception 설정">
+      <option name="closed" value="true" />
+      <created>1753784627017</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1753784627017</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -194,6 +213,7 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="[CHORE] 프로젝트 기본 세팅" />
-    <option name="LAST_COMMIT_MESSAGE" value="[CHORE] 프로젝트 기본 세팅" />
+    <MESSAGE value="[FEATURE] error exception 설정" />
+    <option name="LAST_COMMIT_MESSAGE" value="[FEATURE] error exception 설정" />
   </component>
 </project>
