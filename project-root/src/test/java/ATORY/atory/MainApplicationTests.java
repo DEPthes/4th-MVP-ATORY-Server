@@ -1,4 +1,4 @@
-package ATORY.main;
+package ATORY.atory;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

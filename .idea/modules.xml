@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/4th-MVP-ATORY-Server.iml" filepath="$PROJECT_DIR$/.idea/4th-MVP-ATORY-Server.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/project-root.main.iml" filepath="$PROJECT_DIR$/.idea/modules/project-root.main.iml" />
     </modules>
   </component>
 </project>
