@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 public class Follow {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     //팔로우 하는 사람
