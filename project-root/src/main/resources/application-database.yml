@@ -1,0 +1,21 @@
+#DB 설정
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://artory-db.c108muwkuig8.ap-northeast-2.rds.amazonaws.com/artoryDB?serverTimezone=Asia/Seoul&characterEncoding=UTF-8  # RDS 주소
+    username: admin
+    password: artory000
+
+  #JPA 설정
+  jpa:
+    database-platform: org.hibernate.dialect.MySQLDialect
+    hibernate:
+      ddl-auto: update # 애플리케이션 실행 시 Entity 변경 사항을 DB에 자동 반영
+      #create / validate 확인
+
+    # 배포 할 때는 open-in-view false 설정
+    open-in-view: false
+    properties:
+      hibernate:
+        # show_sql: true # 실행되는 SQL 쿼리를 로그로 출력(디버깅용)
+        format_sql: true # SQL 쿼리를 보기 좋게 정렬
