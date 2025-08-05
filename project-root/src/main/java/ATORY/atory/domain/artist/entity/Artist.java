@@ -22,14 +22,24 @@ public class Artist {
 
     private String birth;
     private String educationBackground;
+    private String statusMessage; // 작가 상태메시지
+    private String bannerImageUrl; // 배너 이미지
+    private String englishName; // 영어 이름
+    private Boolean isContactPublic = Boolean.TRUE; // 연락처 공개 여부
+    private Boolean isEmailPublic = Boolean.TRUE; // 이메일 공개 여부
 
     private Boolean disclosureStatus = Boolean.TRUE;
 
     @Builder
-    public Artist(User user, String birth, String educationBackground, Boolean disclosureStatus) {
+    public Artist(User user, String birth, String educationBackground, Boolean disclosureStatus, String statusMessage, String bannerImageUrl, String englishName, Boolean isContactPublic, Boolean isEmailPublic) {
         this.user = user;
         this.birth = birth;
         this.educationBackground = educationBackground;
         this.disclosureStatus = disclosureStatus;
+        this.statusMessage = statusMessage;
+        this.bannerImageUrl = bannerImageUrl;
+        this.englishName = englishName;
+        this.isContactPublic = isContactPublic;
+        this.isEmailPublic = isEmailPublic;
     }
 }

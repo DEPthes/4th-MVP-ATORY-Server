@@ -72,4 +72,18 @@ public class GlobalExceptionHandler {
                 .status(HttpStatus.BAD_REQUEST)
                 .body("JSON 처리 중 오류가 발생했습니다: " + ex.getMessage());
     }
+
+    // UserNotFoundException 처리
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<ApiResult<String>> handleUserNotFoundException(UserNotFoundException exception) {
+        ApiResult<String> apiResult = ApiResult.withError(ErrorCode.USER_NOT_FOUND, exception.getMessage());
+        return new ResponseEntity<>(apiResult, HttpStatus.NOT_FOUND);
+    }
+
+    // InvalidRoleException 처리
+    @ExceptionHandler(InvalidRoleException.class)
+    public ResponseEntity<ApiResult<String>> handleInvalidRoleException(InvalidRoleException exception) {
+        ApiResult<String> apiResult = ApiResult.withError(ErrorCode.INVALID_INPUT_VALUE, exception.getMessage());
+        return new ResponseEntity<>(apiResult, HttpStatus.BAD_REQUEST);
+    }
 }
