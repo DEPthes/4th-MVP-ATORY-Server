@@ -12,16 +12,16 @@ import lombok.NoArgsConstructor;
 public class Follow {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     //팔로우 하는 사람
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "follower_id")
     private User follower;
 
     //팔로우 하는 대상
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "following_id")
     private User following;
 }
