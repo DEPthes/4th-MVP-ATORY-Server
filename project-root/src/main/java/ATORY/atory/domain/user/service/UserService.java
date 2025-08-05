@@ -5,15 +5,26 @@ import ATORY.atory.domain.user.dto.SocialLoginRequestDto;
 import ATORY.atory.domain.user.dto.SocialLoginResponseDto;
 import ATORY.atory.domain.user.dto.ProfileSetupRequestDto;
 import ATORY.atory.domain.user.dto.ProfileSetupResponseDto;
+import ATORY.atory.domain.user.dto.BusinessValidationRequestDto;
+import ATORY.atory.domain.user.dto.BusinessValidationResponseDto;
+import ATORY.atory.domain.user.dto.VerificationRequestDto;
+import ATORY.atory.domain.user.dto.VerificationConfirmRequestDto;
+import ATORY.atory.domain.user.dto.VerificationResponseDto;
+import ATORY.atory.domain.user.dto.GalleryProfileRequestDto;
+import ATORY.atory.domain.user.dto.GalleryProfileResponseDto;
 import ATORY.atory.domain.user.entity.User;
 import ATORY.atory.domain.user.repository.UseRepository;
 import ATORY.atory.domain.artist.entity.Artist;
 import ATORY.atory.domain.artist.repository.ArtistRepository;
 import ATORY.atory.domain.collector.entity.Collector;
 import ATORY.atory.domain.collector.repository.CollectorRepository;
+import ATORY.atory.domain.gallery.entity.Gallery;
+import ATORY.atory.domain.gallery.repository.GalleryRepository;
 import ATORY.atory.global.exception.UserNotFoundException;
 import ATORY.atory.global.exception.InvalidRoleException;
+import ATORY.atory.global.exception.BusinessValidationException;
 import ATORY.atory.global.security.JwtProvider;
+import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -22,11 +33,15 @@ import org.json.JSONObject;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class UserService {
 
     private final UseRepository userRepository;
     private final ArtistRepository artistRepository;
     private final CollectorRepository collectorRepository;
+    private final GalleryRepository galleryRepository;
+    private final BusinessValidationService businessValidationService;
+    private final VerificationService verificationService;
     private final JwtProvider jwtProvider;
 
     public GoogleLoginResponseDto googleLogin(String code) {
@@ -142,6 +157,103 @@ public class UserService {
                 user.getUsername(),
                 "Profile setup completed successfully"
         );
+    }
+
+    public BusinessValidationResponseDto validateBusiness(BusinessValidationRequestDto requestDto) {
+        try {
+            // 필수 입력값 검증
+            if (requestDto.getRegistrationNumber() == null || requestDto.getRegistrationNumber().trim().isEmpty()) {
+                throw new BusinessValidationException("필수 정보가 누락되었습니다.");
+            }
+
+            boolean isValid = businessValidationService.validateBusinessRegistrationNumber(requestDto.getRegistrationNumber());
+            String businessName = null;
+            
+            if (isValid) {
+                businessName = businessValidationService.getBusinessName(requestDto.getRegistrationNumber());
+            } else {
+                throw new BusinessValidationException("유효하지 않은 사업자 등록번호입니다.");
+            }
+            
+            return new BusinessValidationResponseDto(isValid, businessName);
+            
+        } catch (BusinessValidationException e) {
+            throw e;
+        } catch (Exception e) {
+            log.error("사업자 등록번호 검증 중 오류 발생: {}", e.getMessage(), e);
+            throw new RuntimeException("회원가입에 실패했습니다. 잠시 후 다시 시도해주세요.", e);
+        }
+    }
+
+    public VerificationResponseDto sendVerificationCode(VerificationRequestDto requestDto) {
+        try {
+            String code = verificationService.sendVerificationCode(requestDto.getPhone());
+            return new VerificationResponseDto(true, "인증번호가 발송되었습니다.");
+        } catch (Exception e) {
+            log.error("인증번호 발송 실패: {}", e.getMessage(), e);
+            return new VerificationResponseDto(false, "인증번호 발송에 실패했습니다.");
+        }
+    }
+
+    public VerificationResponseDto confirmVerificationCode(VerificationConfirmRequestDto requestDto) {
+        boolean isValid = verificationService.verifyCode(requestDto.getPhone(), requestDto.getCode());
+        
+        if (isValid) {
+            return new VerificationResponseDto(true, "인증이 완료되었습니다.");
+        } else {
+            return new VerificationResponseDto(false, "인증번호가 만료되었거나 올바르지 않습니다.");
+        }
+    }
+
+    public GalleryProfileResponseDto setupGalleryProfile(GalleryProfileRequestDto requestDto) {
+        try {
+            // 사용자 조회
+            User user = userRepository.findById(requestDto.getUserId())
+                    .orElseThrow(() -> new UserNotFoundException("User not found with id: " + requestDto.getUserId()));
+
+            // 사업자 등록번호 검증
+            if (requestDto.getRegistrationNumber() != null && !requestDto.getRegistrationNumber().trim().isEmpty()) {
+                boolean isValidBusiness = businessValidationService.validateBusinessRegistrationNumber(requestDto.getRegistrationNumber());
+                if (!isValidBusiness) {
+                    throw new BusinessValidationException("유효하지 않은 사업자 등록번호입니다.");
+                }
+            }
+
+            // 갤러리 정보 저장
+            Gallery gallery = Gallery.builder()
+                    .user(user)
+                    .name(requestDto.getGalleryName())
+                    .registrationNumber(requestDto.getRegistrationNumber())
+                    .location(requestDto.getLocation())
+                    .managerPhone(requestDto.getManagerPhone())
+                    .managerName(requestDto.getManagerName())
+                    .email(requestDto.getEmail())
+                    .bio(requestDto.getBio())
+                    .address(requestDto.getAddress())
+                    .zipCode(requestDto.getZipCode())
+                    .city(requestDto.getCity())
+                    .district(requestDto.getDistrict())
+                    .neighborhood(requestDto.getNeighborhood())
+                    .build();
+            
+            galleryRepository.save(gallery);
+
+            // 사용자 프로필 완료 처리
+            user.completeProfile();
+            userRepository.save(user);
+
+            return new GalleryProfileResponseDto(
+                    user.getId(),
+                    gallery.getName(),
+                    "프로필 등록 완료"
+            );
+            
+        } catch (BusinessValidationException e) {
+            throw e;
+        } catch (Exception e) {
+            log.error("갤러리 프로필 설정 중 오류 발생: {}", e.getMessage(), e);
+            throw new RuntimeException("회원가입에 실패했습니다. 잠시 후 다시 시도해주세요.", e);
+        }
     }
 
     private String getAccessToken(String code) {
