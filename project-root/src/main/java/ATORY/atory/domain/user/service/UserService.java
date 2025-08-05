@@ -7,11 +7,9 @@ import ATORY.atory.domain.user.dto.ProfileSetupRequestDto;
 import ATORY.atory.domain.user.dto.ProfileSetupResponseDto;
 import ATORY.atory.domain.user.dto.BusinessValidationRequestDto;
 import ATORY.atory.domain.user.dto.BusinessValidationResponseDto;
-import ATORY.atory.domain.user.dto.VerificationRequestDto;
-import ATORY.atory.domain.user.dto.VerificationConfirmRequestDto;
-import ATORY.atory.domain.user.dto.VerificationResponseDto;
 import ATORY.atory.domain.user.dto.GalleryProfileRequestDto;
 import ATORY.atory.domain.user.dto.GalleryProfileResponseDto;
+import ATORY.atory.domain.user.dto.GnbUserInfoResponseDto;
 import ATORY.atory.domain.user.entity.User;
 import ATORY.atory.domain.user.repository.UseRepository;
 import ATORY.atory.domain.artist.entity.Artist;
@@ -41,7 +39,6 @@ public class UserService {
     private final CollectorRepository collectorRepository;
     private final GalleryRepository galleryRepository;
     private final BusinessValidationService businessValidationService;
-    private final VerificationService verificationService;
     private final JwtProvider jwtProvider;
 
     public GoogleLoginResponseDto googleLogin(String code) {
@@ -72,14 +69,12 @@ public class UserService {
     }
 
     public SocialLoginResponseDto socialLogin(SocialLoginRequestDto requestDto) {
-        // 기존 사용자 확인
         User user = userRepository.findByGoogleID(requestDto.getProviderId())
                 .orElse(null);
 
         boolean isNewUser = false;
-        
+
         if (user == null) {
-            // 신규 사용자인 경우 회원가입 처리
             isNewUser = true;
             user = User.builder()
                     .username(requestDto.getNickname())
@@ -94,7 +89,6 @@ public class UserService {
                     .build();
             user = userRepository.save(user);
         } else {
-            // 기존 사용자이지만 프로필 이미지가 업데이트된 경우
             if (user.getProfileImgUrl() == null || !user.getProfileImgUrl().equals(requestDto.getProfileImgUrl())) {
                 user.updateProfileImgUrl(requestDto.getProfileImgUrl());
                 userRepository.save(user);
@@ -113,11 +107,9 @@ public class UserService {
     }
 
     public ProfileSetupResponseDto setupProfile(ProfileSetupRequestDto requestDto) {
-        // 사용자 조회
         User user = userRepository.findById(requestDto.getUserId())
                 .orElseThrow(() -> new UserNotFoundException("User not found with id: " + requestDto.getUserId()));
 
-        // 사용자 기본 정보 업데이트
         user.updateProfileInfo(
                 requestDto.getName(),
                 requestDto.getPhone(),
@@ -125,12 +117,10 @@ public class UserService {
                 requestDto.getBirthDate(),
                 requestDto.getBio()
         );
-        
-        // 프로필 완료 처리
+
         user.completeProfile();
         userRepository.save(user);
 
-        // 역할에 따라 Artist 또는 Collector 엔티티 생성
         if ("ARTIST".equals(requestDto.getRole())) {
             Artist artist = Artist.builder()
                     .user(user)
@@ -148,7 +138,7 @@ public class UserService {
                     .build();
             collectorRepository.save(collector);
         } else {
-            throw new InvalidRoleException("Invalid role: " + requestDto.getRole() + ". Must be 'ARTIST' or 'COLLECTOR'");
+            throw new InvalidRoleException("Invalid role: " + requestDto.getRole());
         }
 
         return new ProfileSetupResponseDto(
@@ -161,22 +151,21 @@ public class UserService {
 
     public BusinessValidationResponseDto validateBusiness(BusinessValidationRequestDto requestDto) {
         try {
-            // 필수 입력값 검증
             if (requestDto.getRegistrationNumber() == null || requestDto.getRegistrationNumber().trim().isEmpty()) {
                 throw new BusinessValidationException("필수 정보가 누락되었습니다.");
             }
 
             boolean isValid = businessValidationService.validateBusinessRegistrationNumber(requestDto.getRegistrationNumber());
             String businessName = null;
-            
+
             if (isValid) {
                 businessName = businessValidationService.getBusinessName(requestDto.getRegistrationNumber());
             } else {
                 throw new BusinessValidationException("유효하지 않은 사업자 등록번호입니다.");
             }
-            
+
             return new BusinessValidationResponseDto(isValid, businessName);
-            
+
         } catch (BusinessValidationException e) {
             throw e;
         } catch (Exception e) {
@@ -185,33 +174,11 @@ public class UserService {
         }
     }
 
-    public VerificationResponseDto sendVerificationCode(VerificationRequestDto requestDto) {
-        try {
-            String code = verificationService.sendVerificationCode(requestDto.getPhone());
-            return new VerificationResponseDto(true, "인증번호가 발송되었습니다.");
-        } catch (Exception e) {
-            log.error("인증번호 발송 실패: {}", e.getMessage(), e);
-            return new VerificationResponseDto(false, "인증번호 발송에 실패했습니다.");
-        }
-    }
-
-    public VerificationResponseDto confirmVerificationCode(VerificationConfirmRequestDto requestDto) {
-        boolean isValid = verificationService.verifyCode(requestDto.getPhone(), requestDto.getCode());
-        
-        if (isValid) {
-            return new VerificationResponseDto(true, "인증이 완료되었습니다.");
-        } else {
-            return new VerificationResponseDto(false, "인증번호가 만료되었거나 올바르지 않습니다.");
-        }
-    }
-
     public GalleryProfileResponseDto setupGalleryProfile(GalleryProfileRequestDto requestDto) {
         try {
-            // 사용자 조회
             User user = userRepository.findById(requestDto.getUserId())
                     .orElseThrow(() -> new UserNotFoundException("User not found with id: " + requestDto.getUserId()));
 
-            // 사업자 등록번호 검증
             if (requestDto.getRegistrationNumber() != null && !requestDto.getRegistrationNumber().trim().isEmpty()) {
                 boolean isValidBusiness = businessValidationService.validateBusinessRegistrationNumber(requestDto.getRegistrationNumber());
                 if (!isValidBusiness) {
@@ -219,7 +186,6 @@ public class UserService {
                 }
             }
 
-            // 갤러리 정보 저장
             Gallery gallery = Gallery.builder()
                     .user(user)
                     .name(requestDto.getGalleryName())
@@ -235,10 +201,9 @@ public class UserService {
                     .district(requestDto.getDistrict())
                     .neighborhood(requestDto.getNeighborhood())
                     .build();
-            
+
             galleryRepository.save(gallery);
 
-            // 사용자 프로필 완료 처리
             user.completeProfile();
             userRepository.save(user);
 
@@ -247,13 +212,52 @@ public class UserService {
                     gallery.getName(),
                     "프로필 등록 완료"
             );
-            
+
         } catch (BusinessValidationException e) {
             throw e;
         } catch (Exception e) {
             log.error("갤러리 프로필 설정 중 오류 발생: {}", e.getMessage(), e);
             throw new RuntimeException("회원가입에 실패했습니다. 잠시 후 다시 시도해주세요.", e);
         }
+    }
+
+    public GnbUserInfoResponseDto getGnbUserInfo(Long userId) {
+        if (userId == null) {
+            return GnbUserInfoResponseDto.builder()
+                    .isAuthenticated(false)
+                    .message("로그인 후 이용해주세요")
+                    .build();
+        }
+
+        User user = userRepository.findById(userId).orElse(null);
+
+        if (user == null) {
+            return GnbUserInfoResponseDto.builder()
+                    .isAuthenticated(false)
+                    .message("로그인 후 이용해주세요")
+                    .build();
+        }
+
+        String profession = "사용자";
+        if (artistRepository.findByUserId(userId).isPresent()) {
+            profession = "작가";
+        } else if (collectorRepository.findByUserId(userId).isPresent()) {
+            profession = "컬렉터";
+        } else if (galleryRepository.findByUserId(userId).isPresent()) {
+            profession = "갤러리";
+        }
+
+        return GnbUserInfoResponseDto.builder()
+                .isAuthenticated(true)
+                .nickname(user.getUsername())
+                .profession(profession)
+                .profileImageUrl(user.getProfileImgUrl())
+                .build();
+    }
+
+    public void logout(Long userId) {
+        log.info("사용자 로그아웃: {}", userId);
+        // TODO: Redis 기반 JWT 블랙리스트 처리
     }
 
     private String getAccessToken(String code) {
