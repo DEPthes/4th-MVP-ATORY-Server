@@ -22,6 +22,10 @@ jobs:
     runs-on: ubuntu-latest
     environment: production
 
+    defaults:
+      run:
+        working-directory: project-root
+        
     steps:
     # (1) 기본 체크아웃
     - name: Checkout
@@ -51,7 +55,8 @@ jobs:
       uses: gradle/gradle-build-action@0d13054264b0bb894ded474f08ebb30921341cee
       with:
         arguments: clean build -x test
-
+        build-root-directory: project-root
+        
     # (5) AWS 인증 (IAM 사용자 Access Key, Secret Key 활용)
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1
