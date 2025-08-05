@@ -33,8 +33,12 @@ jobs:
       with:
         distribution: 'temurin'
         java-version: '21'
-
-    # (3) YML 파일 생성
+        
+    # (3) YML 디렉토리 생성
+    - name: Create yml directory
+      run: mkdir -p src/main/resources
+      
+    # (4) YML 파일 생성
     - name: Set YML
       run: |
           echo "${{ secrets.APPLICATION_DATABASE_YML }}" | base64 --decode > src/main/resources/application-database.yml
