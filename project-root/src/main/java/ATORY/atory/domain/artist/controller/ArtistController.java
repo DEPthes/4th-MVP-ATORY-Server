@@ -1,11 +1,11 @@
 package ATORY.atory.domain.artist.controller;
 
-import ATORY.atory.domain.artist.dto.ArtistDto;
+import ATORY.atory.domain.artist.dto.ArtistWithArtistNoteDto;
+import ATORY.atory.domain.artist.dto.ArtistWithPostDto;
 import ATORY.atory.domain.artist.service.ArtistService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.data.domain.Pageable;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -14,8 +14,13 @@ public class ArtistController {
     private final ArtistService artistService;
 
     @GetMapping("/{id}")
-    public ArtistDto findById(Long id) {
-        return artistService.findById(id);
+    public ArtistWithArtistNoteDto findArtistNoteById(@PathVariable Long id) {
+        return artistService.findArtistNoteById(id);
+    }
+
+    @GetMapping("/{id}/posts")
+    public ArtistWithPostDto findPostsById(@PathVariable Long id, @RequestParam("type") String postType, Pageable pageable) {
+        return artistService.findPostById(id,postType,pageable);
     }
 
 }

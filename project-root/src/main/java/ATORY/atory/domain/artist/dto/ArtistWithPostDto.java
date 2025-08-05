@@ -1,35 +1,35 @@
 package ATORY.atory.domain.artist.dto;
 
 import ATORY.atory.domain.artist.artistNote.dto.ArtistNoteDto;
-import ATORY.atory.domain.artist.entity.Artist;
+import ATORY.atory.domain.post.dto.PostDto;
 import ATORY.atory.domain.user.dto.UserDto;
-import ATORY.atory.domain.user.entity.User;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
 @NoArgsConstructor
 @Getter
 @Setter
-public class ArtistDto {
+public class ArtistWithPostDto {
 
     private Long id;
     private UserDto user;
-    private List<ArtistNoteDto> artistNotes;
     private String birth;
     private String educationBackground;
     private Boolean disclosureStatus;
+    private Page<PostDto> post;
 
     @Builder
-    public ArtistDto(Long id, UserDto user, List<ArtistNoteDto> artistNotes,String birth, String educationBackground, Boolean disclosureStatus) {
+    public ArtistWithPostDto(Long id, UserDto user, String birth, String educationBackground, Boolean disclosureStatus,Page<PostDto> post) {
         this.id = id;
         this.user = user;
-        this.artistNotes = artistNotes;
         this.birth = birth;
         this.educationBackground = educationBackground;
         this.disclosureStatus = disclosureStatus;
+        this.post = post;
     }
 }

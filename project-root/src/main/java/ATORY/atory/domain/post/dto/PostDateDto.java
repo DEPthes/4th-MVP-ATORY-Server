@@ -1,6 +1,7 @@
 package ATORY.atory.domain.post.dto;
 
 import ATORY.atory.domain.post.entity.Post;
+import ATORY.atory.domain.post.entity.PostDate;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -23,5 +24,14 @@ public class PostDateDto {
         this.post = post;
         this.createdAt = createdAt;
         this.modifiedAt = modifiedAt;
+    }
+
+    public static PostDateDto from(PostDate postDate) {
+        return PostDateDto.builder()
+                .id(postDate.getId())
+                .post(postDate.getPost())
+                .createdAt(postDate.getCreatedAt())
+                .modifiedAt(postDate.getModifiedAt())
+                .build();
     }
 }

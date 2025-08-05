@@ -27,8 +27,11 @@ public class Artist {
     @OneToMany(mappedBy = "artist", fetch = FetchType.LAZY)
     private List<ArtistNote> artistNotes = new ArrayList<>();
 
+
+
     private String birth;
     private String educationBackground;
+
 
     private Boolean disclosureStatus = Boolean.TRUE;
 
