@@ -26,6 +26,9 @@ public class BusinessValidationService {
 
     @Value("${public.data.api.url}")
     private String apiUrl;
+    
+    @Value("${public.data.api.base-url}")
+    private String baseUrl;
 
     public boolean validateBusinessRegistrationNumber(String registrationNumber) {
         try {
@@ -103,7 +106,7 @@ public class BusinessValidationService {
 
     private PublicDataBusinessResponseDto callPublicDataApi(String registrationNumber) {
         try {
-            // URL에 serviceKey를 쿼리 파라미터로 포함
+            // 공공데이터포털 API URL 구성
             String url = String.format("%s?serviceKey=%s", apiUrl, apiKey);
             
             // 공공데이터포털 API는 POST 요청 시 JSON 형태로 데이터 전송
@@ -111,11 +114,13 @@ public class BusinessValidationService {
             
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
+            headers.set("Accept", "application/json");
             
             HttpEntity<PublicDataBusinessRequestDto> request = new HttpEntity<>(requestDto, headers);
             
             log.info("공공데이터포털 API 호출 URL: {}", url);
             log.info("공공데이터포털 API 요청 데이터: {}", registrationNumber);
+            log.info("공공데이터포털 API 키: {}", apiKey);
             
             PublicDataBusinessResponseDto response = restTemplate.postForObject(
                 url, 

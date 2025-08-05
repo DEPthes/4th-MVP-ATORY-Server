@@ -7,9 +7,6 @@ import ATORY.atory.domain.user.dto.ProfileSetupRequestDto;
 import ATORY.atory.domain.user.dto.ProfileSetupResponseDto;
 import ATORY.atory.domain.user.dto.BusinessValidationRequestDto;
 import ATORY.atory.domain.user.dto.BusinessValidationResponseDto;
-import ATORY.atory.domain.user.dto.VerificationRequestDto;
-import ATORY.atory.domain.user.dto.VerificationConfirmRequestDto;
-import ATORY.atory.domain.user.dto.VerificationResponseDto;
 import ATORY.atory.domain.user.dto.GalleryProfileRequestDto;
 import ATORY.atory.domain.user.dto.GalleryProfileResponseDto;
 import ATORY.atory.domain.user.entity.User;
@@ -41,7 +38,6 @@ public class UserService {
     private final CollectorRepository collectorRepository;
     private final GalleryRepository galleryRepository;
     private final BusinessValidationService businessValidationService;
-    private final VerificationService verificationService;
     private final JwtProvider jwtProvider;
 
     public GoogleLoginResponseDto googleLogin(String code) {
@@ -185,25 +181,7 @@ public class UserService {
         }
     }
 
-    public VerificationResponseDto sendVerificationCode(VerificationRequestDto requestDto) {
-        try {
-            String code = verificationService.sendVerificationCode(requestDto.getPhone());
-            return new VerificationResponseDto(true, "인증번호가 발송되었습니다.");
-        } catch (Exception e) {
-            log.error("인증번호 발송 실패: {}", e.getMessage(), e);
-            return new VerificationResponseDto(false, "인증번호 발송에 실패했습니다.");
-        }
-    }
 
-    public VerificationResponseDto confirmVerificationCode(VerificationConfirmRequestDto requestDto) {
-        boolean isValid = verificationService.verifyCode(requestDto.getPhone(), requestDto.getCode());
-        
-        if (isValid) {
-            return new VerificationResponseDto(true, "인증이 완료되었습니다.");
-        } else {
-            return new VerificationResponseDto(false, "인증번호가 만료되었거나 올바르지 않습니다.");
-        }
-    }
 
     public GalleryProfileResponseDto setupGalleryProfile(GalleryProfileRequestDto requestDto) {
         try {

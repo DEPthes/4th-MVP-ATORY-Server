@@ -43,3 +43,4 @@ public:
     api:
       key: ${PUBLIC_DATA_API_KEY:Zy3PSa9cVebmvq0Ca0ljgj6bYl66%2BYSOms%2B5Z22J3yvKDTmDYkNuJjSeyJ6hbZ4EYWfiL8wkQNbb2R8DAbz9hw%3D%3D}
       url: https://api.odcloud.kr/api/nts-businessman/v1/status
+      base-url: https://api.odcloud.kr/api
