@@ -5,6 +5,8 @@ import ATORY.atory.domain.post.dto.PostDateDto;
 import ATORY.atory.domain.post.dto.PostDto;
 import ATORY.atory.domain.post.entity.Post;
 import ATORY.atory.domain.post.repository.PostRepository;
+import ATORY.atory.domain.tag.dto.TagDto;
+import ATORY.atory.domain.tag.entity.Tag;
 import ATORY.atory.global.exception.ErrorCode;
 import ATORY.atory.global.exception.MapperException;
 import jakarta.transaction.Transactional;
@@ -14,6 +16,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Transactional
@@ -21,11 +24,16 @@ import java.util.List;
 public class PostService {
     private final PostRepository postRepository;
     private final ArchiveService archiveService;
-    public Page<PostDto> findPostsByUserIdAndPostType(Long id, String postType,Pageable pageable) {
-        Page<Post> posts = postRepository.findPostsByUserIdAndPostType(id,postType,pageable);
+    public Page<PostDto> findPostsByUserId(Long id, String postType,Pageable pageable) {
+        Page<Post> posts = postRepository.findPostsByUserId(id,postType,pageable);
         if (posts.isEmpty()) {
             throw new MapperException(ErrorCode.SER_NOT_FOUND);
         }
+        List<Tag> tags = posts.stream()
+                .flatMap(post -> post.getTagPosts().stream())
+                .map(tagPost -> tagPost.getTag())
+                .distinct()
+                .toList();
 
         return posts.map(post -> {
             Long archiveCount = archiveService.getArchiveCountByPostId(post.getId());
@@ -39,8 +47,38 @@ public class PostService {
                     .postType(post.getPostType())
                     .postDate(PostDateDto.from(post.getPostDate()))
                     .archived(archiveCount)
+                    .tags(TagDto.from(tags))
                     .build();
         });
 
+    }
+
+    public Page<PostDto> findPostsByUserIdAndTag(Long id, String postType,String tag, Pageable pageable) {
+        Page<Post> posts = postRepository.findPostsByUserIdAndTag(id,postType,tag,pageable);
+        if (posts.isEmpty()) {
+            throw new MapperException(ErrorCode.SER_NOT_FOUND);
+        }
+        List<Tag> tags = posts.stream()
+                .flatMap(post -> post.getTagPosts().stream())
+                .map(tagPost -> tagPost.getTag())
+                .distinct()
+                .toList();
+
+
+        return posts.map(post -> {
+            Long archiveCount = archiveService.getArchiveCountByPostId(post.getId());
+            return PostDto.builder()
+                    .id(post.getId())
+                    .user(post.getUser())
+                    .name(post.getName())
+                    .imageURL(post.getImageURL())
+                    .exhibitionURL(post.getExhibitionURL())
+                    .description(post.getDescription())
+                    .postType(post.getPostType())
+                    .postDate(PostDateDto.from(post.getPostDate()))
+                    .archived(archiveCount)
+                    .tags(TagDto.from(tags))
+                    .build();
+        });
     }
 }

@@ -16,9 +16,23 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     @Query("SELECT p FROM Post p JOIN p.postDate pd " +
             "WHERE p.user.id = :userId AND p.postType = :postType " +
             "ORDER BY pd.createdAt DESC")
-    Page<Post> findPostsByUserIdAndPostType(@Param("userId") Long userId,
-                                            @Param("postType") String postType,
-                                            Pageable pageable);
+    Page<Post> findPostsByUserId(@Param("userId") Long userId,
+                                 @Param("postType") String postType,
+                                 Pageable pageable);
+
+
+    @Query(value = "SELECT DISTINCT p FROM Post p " +
+            "JOIN p.tagPosts tp " +
+            "JOIN tp.tag t " +
+            "JOIN p.postDate pd " +
+            "WHERE p.user.id = :userId " +
+            "AND p.postType = :postType " +
+            "AND t.name = :tagName " +
+            "ORDER BY pd.createdAt DESC")
+            Page<Post> findPostsByUserIdAndTag(@Param("userId") Long userId,
+                                               @Param("postType") String postType,
+                                               @Param("tagName") String tagName,
+                                               Pageable pageable);
 
 }
 

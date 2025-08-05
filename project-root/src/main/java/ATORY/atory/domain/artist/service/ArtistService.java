@@ -54,7 +54,7 @@ public class ArtistService {
 
         UserDto userDto = userService.findById(user.getId());
 
-        Page<PostDto> posts = postService.findPostsByUserIdAndPostType(user.getId(), postType,pageable);
+        Page<PostDto> posts = postService.findPostsByUserId(user.getId(), postType,pageable);
         return ArtistWithPostDto.builder()
                 .id(found.getId())
                 .user(userDto)
@@ -63,6 +63,27 @@ public class ArtistService {
                 .disclosureStatus(found.getDisclosureStatus())
                 .post(posts)
                 .build();
+
+
+    }
+
+    public ArtistWithPostDto findPostByIdAndTag(Long id, String postType, String tag, Pageable pageable) {
+        Artist found = findArtistById(id);
+
+        User user = found.getUser();
+
+        UserDto userDto = userService.findById(user.getId());
+
+        Page<PostDto> posts = postService.findPostsByUserIdAndTag(user.getId(), postType,tag,pageable);
+        return ArtistWithPostDto.builder()
+                .id(found.getId())
+                .user(userDto)
+                .birth(found.getBirth())
+                .educationBackground(found.getEducationBackground())
+                .disclosureStatus(found.getDisclosureStatus())
+                .post(posts)
+                .build();
+
 
 
     }

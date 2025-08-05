@@ -23,4 +23,8 @@ public class ArtistController {
         return artistService.findPostById(id,postType,pageable);
     }
 
+    @GetMapping("/{id}/posts/tag")
+    public ArtistWithPostDto findPostsByIdAndTag(@PathVariable Long id,@RequestParam("type") String postType, @RequestParam("tag") String tag, Pageable pageable) {
+        return artistService.findPostByIdAndTag(id,postType,tag,pageable);
+    }
 }

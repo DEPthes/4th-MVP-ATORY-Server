@@ -2,6 +2,7 @@ package ATORY.atory.domain.post.dto;
 
 import ATORY.atory.domain.post.entity.Post;
 import ATORY.atory.domain.post.entity.PostType;
+import ATORY.atory.domain.tag.dto.TagDto;
 import ATORY.atory.domain.user.entity.User;
 import lombok.Builder;
 import lombok.Getter;
@@ -25,9 +26,10 @@ public class PostDto {
     private PostType postType;
     private PostDateDto postDate;
     private Long archived;
+    private List<TagDto> tags;
 
     @Builder
-    public PostDto(Long id, User user, String name, String imageURL, String exhibitionURL, String description, PostType postType,PostDateDto postDate,Long archived) {
+    public PostDto(Long id, User user, String name, String imageURL, String exhibitionURL, String description, PostType postType,PostDateDto postDate,Long archived,List<TagDto> tags) {
         this.id = id;
         this.user = user;
         this.name = name;
@@ -37,5 +39,6 @@ public class PostDto {
         this.postType = postType;
         this.postDate = postDate;
         this.archived = archived;
+        this.tags = tags;
     }
 }
