@@ -87,13 +87,6 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(apiResult, HttpStatus.BAD_REQUEST);
     }
 
-    // VerificationException 처리
-    @ExceptionHandler(VerificationException.class)
-    public ResponseEntity<ApiResult<String>> handleVerificationException(VerificationException exception) {
-        ApiResult<String> apiResult = ApiResult.withError(ErrorCode.INVALID_INPUT_VALUE, exception.getMessage());
-        return new ResponseEntity<>(apiResult, HttpStatus.BAD_REQUEST);
-    }
-
     // BusinessValidationException 처리
     @ExceptionHandler(BusinessValidationException.class)
     public ResponseEntity<ApiResult<String>> handleBusinessValidationException(BusinessValidationException exception) {

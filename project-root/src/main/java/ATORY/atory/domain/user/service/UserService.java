@@ -7,6 +7,7 @@ import ATORY.atory.domain.user.dto.ProfileSetupRequestDto;
 import ATORY.atory.domain.user.dto.ProfileSetupResponseDto;
 import ATORY.atory.domain.user.dto.BusinessValidationRequestDto;
 import ATORY.atory.domain.user.dto.BusinessValidationResponseDto;
+
 import ATORY.atory.domain.user.dto.GalleryProfileRequestDto;
 import ATORY.atory.domain.user.dto.GalleryProfileResponseDto;
 import ATORY.atory.domain.user.dto.GnbUserInfoResponseDto;

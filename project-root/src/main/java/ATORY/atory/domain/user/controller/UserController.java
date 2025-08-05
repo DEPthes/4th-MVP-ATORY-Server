@@ -8,9 +8,7 @@ import ATORY.atory.domain.user.dto.ProfileSetupRequestDto;
 import ATORY.atory.domain.user.dto.ProfileSetupResponseDto;
 import ATORY.atory.domain.user.dto.BusinessValidationRequestDto;
 import ATORY.atory.domain.user.dto.BusinessValidationResponseDto;
-import ATORY.atory.domain.user.dto.VerificationRequestDto;
-import ATORY.atory.domain.user.dto.VerificationConfirmRequestDto;
-import ATORY.atory.domain.user.dto.VerificationResponseDto;
+
 import ATORY.atory.domain.user.dto.GalleryProfileRequestDto;
 import ATORY.atory.domain.user.dto.GalleryProfileResponseDto;
 import ATORY.atory.domain.user.dto.GnbUserInfoResponseDto;
@@ -48,6 +46,13 @@ public class UserController {
     @PostMapping("/users/profile/setup")
     public ResponseEntity<ProfileSetupResponseDto> setupProfile(@RequestBody ProfileSetupRequestDto requestDto) {
         ProfileSetupResponseDto responseDto = userService.setupProfile(requestDto);
+        return ResponseEntity.ok(responseDto);
+    }
+
+    @PostMapping("/business/validate")
+    @Operation(summary = "사업자 등록번호 유효성 검증", description = "사업자 등록번호의 유효성을 검증합니다.")
+    public ResponseEntity<BusinessValidationResponseDto> validateBusiness(@RequestBody BusinessValidationRequestDto requestDto) {
+        BusinessValidationResponseDto responseDto = userService.validateBusiness(requestDto);
         return ResponseEntity.ok(responseDto);
     }
 
