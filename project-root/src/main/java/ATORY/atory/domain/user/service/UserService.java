@@ -47,6 +47,7 @@ public class UserService {
                             .provider("google")
                             .phone(null)
                             .birthDate(null)
+                            .isProfileCompleted(false)
                             .build();
                     return userRepository.save(newUser);
                 });
@@ -74,6 +75,7 @@ public class UserService {
                     .profileImgUrl(requestDto.getProfileImgUrl())
                     .phone(null)
                     .birthDate(null)
+                    .isProfileCompleted(false)
                     .build();
             user = userRepository.save(user);
         } else {
@@ -108,6 +110,9 @@ public class UserService {
                 requestDto.getBirthDate(),
                 requestDto.getBio()
         );
+        
+        // 프로필 완료 처리
+        user.completeProfile();
         userRepository.save(user);
 
         // 역할에 따라 Artist 또는 Collector 엔티티 생성

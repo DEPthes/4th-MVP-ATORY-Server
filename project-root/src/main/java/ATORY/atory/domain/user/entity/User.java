@@ -25,9 +25,10 @@ public class User {
     private String profileImgUrl;
     private String phone;
     private String birthDate;
+    private Boolean isProfileCompleted = false;
 
     @Builder
-    public User(String username, String googleID, String email, String introduction, String contact, Boolean isSocial, String provider, String profileImgUrl, String phone, String birthDate) {
+    public User(String username, String googleID, String email, String introduction, String contact, Boolean isSocial, String provider, String profileImgUrl, String phone, String birthDate, Boolean isProfileCompleted) {
         this.username = username;
         this.googleID = googleID;
         this.email = email;
@@ -38,6 +39,7 @@ public class User {
         this.profileImgUrl = profileImgUrl;
         this.phone = phone;
         this.birthDate = birthDate;
+        this.isProfileCompleted = isProfileCompleted;
     }
 
     public void updateSocialInfo(String googleID, String provider) {
@@ -56,5 +58,9 @@ public class User {
         this.email = email;
         this.birthDate = birthDate;
         this.introduction = introduction;
+    }
+
+    public void completeProfile() {
+        this.isProfileCompleted = true;
     }
 }
