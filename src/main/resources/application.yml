@@ -1,0 +1,51 @@
+# logging 설정
+logging:
+  level:
+    org:
+      hibernate:
+        type:
+          descriptor:
+            sql: debug
+
+spring:
+  profiles:
+    active: ["database", "springdoc"]
+  output:
+    ansi:
+      enabled: always
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+  jpa:
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: 'Asia/Seoul'
+
+# 오류 처리
+server:
+  error:
+    include-exception: true
+    include-stacktrace: always
+  #port 설정
+  port: 8080
+
+# SMS 설정
+sms:
+  coolsms:
+    api-key: ${COOLSMS_API_KEY:your-api-key}
+    api-secret: ${COOLSMS_API_SECRET:your-api-secret}
+    from: ${COOLSMS_FROM:01012345678}
+
+# 공공데이터포털 API 설정
+public:
+  data:
+    api:
+      key: ${PUBLIC_DATA_API_KEY:Zy3PSa9cVebmvq0Ca0ljgj6bYl66%2BYSOms%2B5Z22J3yvKDTmDYkNuJjSeyJ6hbZ4EYWfiL8wkQNbb2R8DAbz9hw%3D%3D}
+      url: https://api.odcloud.kr/api/nts-businessman/v1/status
+      base-url: https://api.odcloud.kr/api
+
+# JWT 설정
+jwt:
+  secret: ${JWT_SECRET:atory-secret-key-for-jwt-token-generation-2024}
+  expiration: 86400000 # 24시간 (밀리초)
