@@ -1,15 +1,6 @@
-# logging 설정
-logging:
-  level:
-    org:
-      hibernate:
-        type:
-          descriptor:
-            sql: debug
-
 spring:
   profiles:
-    active: ["database", "springdoc"]
+    active: ["database", "springdoc", "jwt"]
   output:
     ansi:
       enabled: always
@@ -21,16 +12,6 @@ spring:
       hibernate:
         jdbc:
           time_zone: 'Asia/Seoul'
-
-# Actuator 설정
-management:
-  endpoints:
-    web:
-      exposure:
-        include: health,info
-  endpoint:
-    health:
-      show-details: always
 
 # 오류 처리
 server:

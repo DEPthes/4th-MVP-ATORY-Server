@@ -1,4 +1,5 @@
 # JWT 설정
 jwt:
-  secret: ${JWT_SECRET:atory-secret-key-for-jwt-token-generation-2024}
-  expiration: 86400000 # 24시간 (밀리초) 
+  secret: atory-jwt-secret-key-2024-very-long-and-secure-key-for-signing-tokens
+  access-token-validity: 3600000  # 1시간 (밀리초)
+  refresh-token-validity: 2592000000  # 30일 (밀리초) 
