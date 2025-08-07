@@ -277,10 +277,15 @@ public class UserService {
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
-            // 제공된 OAuth 정보 사용
-            String clientId = "419535734312-ghb4pidh6qfag215jpb866s0ua0070e5.apps.googleusercontent.com";
-            String clientSecret = "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";
-            String redirectUri = "https://oauth.pstmn.io/v1/callback";
+            // 환경 변수에서 OAuth 정보 가져오기
+            String clientId = System.getenv("GOOGLE_CLIENT_ID");
+            String clientSecret = System.getenv("GOOGLE_CLIENT_SECRET");
+            String redirectUri = System.getenv("GOOGLE_REDIRECT_URI");
+
+            // 환경 변수가 없으면 기본값 사용 (개발용)
+            if (clientId == null) clientId = "419535734312-ghb4pidh6qfag215jpb866s0ua0070e5.apps.googleusercontent.com";
+            if (clientSecret == null) clientSecret = "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";
+            if (redirectUri == null) redirectUri = "https://oauth.pstmn.io/v1/callback";
 
             String body = "code=" + code +
                     "&client_id=" + clientId +
