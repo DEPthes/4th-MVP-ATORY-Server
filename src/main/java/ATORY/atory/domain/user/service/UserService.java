@@ -29,6 +29,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.http.*;
+import org.springframework.beans.factory.annotation.Value;
 import org.json.JSONObject;
 import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
@@ -45,6 +46,15 @@ public class UserService {
     private final GalleryRepository galleryRepository;
     private final BusinessValidationService businessValidationService;
     private final JwtProvider jwtProvider;
+
+    @Value("${google.client.id}")
+    private String googleClientId;
+
+    @Value("${google.client.pw}")
+    private String googleClientSecret;
+
+    @Value("${google.redirect.uri}")
+    private String googleRedirectUri;
 
     public GoogleLoginResponseDto googleLogin(String code) {
         try {
@@ -277,15 +287,12 @@ public class UserService {
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
-            // 환경 변수에서 OAuth 정보 가져오기
-            String clientId = System.getenv("GOOGLE_CLIENT_ID");
-            String clientSecret = System.getenv("GOOGLE_CLIENT_SECRET");
-            String redirectUri = System.getenv("GOOGLE_REDIRECT_URI");
+            // properties 파일에서 OAuth 정보 가져오기
+            String clientId = googleClientId;
+            String clientSecret = googleClientSecret;
+            String redirectUri = googleRedirectUri;
 
-            // 환경 변수가 없으면 기본값 사용 (개발용)
-            if (clientId == null) clientId = "419535734312-ghb4pidh6qfag215jpb866s0ua0070e5.apps.googleusercontent.com";
-            if (clientSecret == null) clientSecret = "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";
-            if (redirectUri == null) redirectUri = "https://oauth.pstmn.io/v1/callback";
+            log.info("Google OAuth 요청 - Client ID: {}, Redirect URI: {}, Code: {}", clientId, redirectUri, code);
 
             String body = "code=" + code +
                     "&client_id=" + clientId +
