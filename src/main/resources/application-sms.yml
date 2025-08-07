@@ -1,0 +1,6 @@
+# SMS 설정
+sms:
+  coolsms:
+    api-key: ${COOLSMS_API_KEY:your-api-key}
+    api-secret: ${COOLSMS_API_SECRET:your-api-secret}
+    from: ${COOLSMS_FROM:01012345678} 

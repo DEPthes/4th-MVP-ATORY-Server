@@ -1,5 +1,4 @@
 springdoc:
-
   default-consumes-media-type: application/json
   default-produces-media-type: application/json
   writer-with-default-pretty-printer: true
