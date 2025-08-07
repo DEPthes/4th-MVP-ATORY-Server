@@ -16,6 +16,7 @@ import ATORY.atory.domain.user.entity.User;
 import ATORY.atory.domain.user.service.UserService;
 import ATORY.atory.global.security.JwtProvider;
 import ATORY.atory.global.dto.ApiResult;
+import ATORY.atory.global.exception.UserNotFoundException;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -60,6 +61,9 @@ public class UserController {
     @Operation(summary = "GNB 사용자 정보 조회", description = "GNB에서 사용할 로그인 사용자 정보를 조회합니다.")
     public ResponseEntity<GnbUserInfoResponseDto> getGnbUserInfo(HttpServletRequest request) {
         Long userId = extractUserIdFromRequest(request);
+        if (userId == null) {
+            throw new UserNotFoundException("유효하지 않은 토큰입니다.");
+        }
         GnbUserInfoResponseDto responseDto = userService.getGnbUserInfo(userId);
         return ResponseEntity.ok(responseDto);
     }
@@ -68,6 +72,9 @@ public class UserController {
     @Operation(summary = "로그아웃", description = "사용자 로그아웃을 처리합니다.")
     public ResponseEntity<Void> logout(HttpServletRequest request) {
         Long userId = extractUserIdFromRequest(request);
+        if (userId == null) {
+            throw new UserNotFoundException("유효하지 않은 토큰입니다.");
+        }
         userService.logout(userId);
         return ResponseEntity.ok().build();
     }
