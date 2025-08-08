@@ -1,0 +1,5 @@
+# JWT 설정
+jwt:
+  secret: atory-jwt-secret-key-2024-very-long-and-secure-key-for-signing-tokens
+  access-token-validity: 3600000  # 1시간 (밀리초)
+  refresh-token-validity: 2592000000  # 30일 (밀리초) 

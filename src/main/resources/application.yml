@@ -1,0 +1,22 @@
+spring:
+  profiles:
+    active: ["database", "springdoc", "jwt"]
+  output:
+    ansi:
+      enabled: always
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+  jpa:
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: 'Asia/Seoul'
+
+# 오류 처리
+server:
+  error:
+    include-exception: true
+    include-stacktrace: always
+  #port 설정
+  port: 8080
