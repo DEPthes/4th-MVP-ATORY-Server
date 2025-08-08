@@ -1,0 +1,19 @@
+springdoc:
+
+  default-consumes-media-type: application/json
+  default-produces-media-type: application/json
+  writer-with-default-pretty-printer: true
+
+  api-docs:
+    groups:
+      enabled: true
+
+  swagger-ui:
+    path: /swagger
+    groups-order: desc
+    tags-sorter: alpha
+    operations-sorter: method
+    disable-swagger-default-url: true
+    display-request-duration: true
+
+  paths-to-match: "/**"
