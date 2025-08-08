@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+
 @Entity
 @NoArgsConstructor
 @Getter
@@ -22,6 +23,7 @@ public class Artist {
 
     private String birth;
     private String educationBackground;
+
 
     private Boolean disclosureStatus = Boolean.TRUE;
 

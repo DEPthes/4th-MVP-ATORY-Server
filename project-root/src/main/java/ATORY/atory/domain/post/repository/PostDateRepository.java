@@ -6,4 +6,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface PostDateRepository extends JpaRepository<PostDate, Long> {
+
+    PostDate findByPostId(Long postId);
 }
