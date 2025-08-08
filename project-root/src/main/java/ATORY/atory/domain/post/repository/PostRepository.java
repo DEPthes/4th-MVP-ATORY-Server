@@ -36,5 +36,23 @@ public interface PostRepository extends JpaRepository<Post, Long> {
                                                @Param("tagName") String tagName,
                                                Pageable pageable);
 
+    @Query("SELECT p FROM Post p " +
+            "JOIN Archive a ON a.post = p " +
+            "JOIN PostDate pd ON pd.post = p " +
+            "WHERE a.user.id = :userId " +
+            "ORDER BY pd.createdAt DESC")
+    Slice<Post> findArchiveByUserId(@Param("userId") Long userId,
+                                  Pageable pageable);
+
+    @Query("SELECT p FROM Post p " +
+            "JOIN Archive a ON a.post = p " +
+            "JOIN PostDate pd ON pd.post = p " +
+            "WHERE a.user.id = :userId " +
+            "AND p.postType = :postType "+
+            "ORDER BY pd.createdAt DESC")
+    Slice<Post> findArchiveByUserIdAndPostType(@Param("userId") Long userId,
+                                    @Param("postType") String postType,
+                                    Pageable pageable);
+
 }
 

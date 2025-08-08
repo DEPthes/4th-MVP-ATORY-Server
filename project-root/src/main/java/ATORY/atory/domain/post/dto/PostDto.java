@@ -58,4 +58,18 @@ public class PostDto {
         this.archived = archived;
         this.tags = tags;
     }
+    public static PostDto from(Post post,Long archiveCount,PostDateDto postDateDto,List<TagDto> tags) {
+        return PostDto.builder()
+                .id(post.getId())
+                .name(post.getName())
+                .imageURL(post.getImageURL())
+                .exhibitionURL(post.getExhibitionURL())
+                .description(post.getDescription())
+                .postType(post.getPostType())
+                .postDate(postDateDto)
+                .archived(archiveCount)
+                .tags(tags)
+                .build();
+
+    }
 }

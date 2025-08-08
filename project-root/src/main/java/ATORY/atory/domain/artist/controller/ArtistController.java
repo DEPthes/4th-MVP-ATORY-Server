@@ -58,7 +58,23 @@ public class ArtistController {
             }
     )
     @GetMapping("/{id}/posts/tag")
-    public ArtistWithPostDto findPostsByIdAndTag(@PathVariable Long id,@RequestParam("type") String postType, @RequestParam("tag") String tag, Pageable pageable,@AuthenticationPrincipal User user) {
+    public ArtistWithPostDto findPostsByIdAndTag(@PathVariable Long id,@RequestParam("type") String postType,
+                                                 @RequestParam("tag") String tag, Pageable pageable,
+                                                 @AuthenticationPrincipal User user) {
         return artistService.getPostByIdAndTag(id,postType,tag,pageable,user);
+    }
+
+
+    @GetMapping("/{id}/archives")
+    public ArtistWithPostDto findArchivesById(@PathVariable Long id, Pageable pageable,@AuthenticationPrincipal User user) {
+        return artistService.getArchivesById(id,pageable,user);
+    }
+
+
+    @GetMapping("/{id}/archives/type")
+    public ArtistWithPostDto findArchivesByIdAndType(@PathVariable Long id,
+                                                     @RequestParam("type") String postType, Pageable pageable,
+                                                     @AuthenticationPrincipal User user) {
+        return artistService.getArtistByIdAndType(id,postType,pageable,user);
     }
 }

@@ -29,59 +29,64 @@ public class PostService {
     private final PostDateRepository postDateRepository;
     private final ArchiveService archiveService;
     private final TagService tagService;
-    public Slice<PostDto> getPostsByUserId(Long id, String postType, Pageable pageable) {
-        Slice<Post> posts = postRepository.findPostsByUserId(id,postType,pageable);
-        if (posts.isEmpty()) {
-            throw new MapperException(ErrorCode.SER_NOT_FOUND);
-        }
-        List<Tag> tags = posts.stream()
+
+    private List<Tag> findAllTags(Slice<Post> posts ) {
+        return posts.stream()
                 .flatMap(post -> tagService.getByPostId(post.getId()).stream())
                 .map(tagPost -> tagPost.getTag())
                 .distinct()
                 .toList();
 
+    }
+
+    public Slice<PostDto> getPostsByUserId(Long id, String postType, Pageable pageable) {
+        Slice<Post> posts = postRepository.findPostsByUserId(id,postType,pageable);
+
+        List<Tag> tags = findAllTags(posts);
+
         return posts.map(post -> {
             Long archiveCount = archiveService.getArchiveCountByPostId(post.getId());
-            return PostDto.builder()
-                    .id(post.getId())
-                    .name(post.getName())
-                    .imageURL(post.getImageURL())
-                    .exhibitionURL(post.getExhibitionURL())
-                    .description(post.getDescription())
-                    .postType(post.getPostType())
-                    .postDate(PostDateDto.from(postDateRepository.findByPostId(post.getId())))
-                    .archived(archiveCount)
-                    .tags(TagDto.from(tags))
-                    .build();
+            PostDateDto postDateDto = PostDateDto.from(postDateRepository.findByPostId(post.getId()));
+            List<TagDto> tagDtos =TagDto.from(tags);
+            return PostDto.from(post,archiveCount,postDateDto,tagDtos);
         });
-
     }
 
     public Slice<PostDto> getPostsByUserIdAndTag(Long id, String postType,String tag, Pageable pageable) {
         Slice<Post> posts = postRepository.findPostsByUserIdAndTag(id,postType,tag,pageable);
-        if (posts.isEmpty()) {
-            throw new MapperException(ErrorCode.SER_NOT_FOUND);
-        }
-        List<Tag> tags = posts.stream()
-                .flatMap(post -> tagService.getByPostId(post.getId()).stream())
-                .map(tagPost -> tagPost.getTag())
-                .distinct()
-                .toList();
 
+        List<Tag> tags = findAllTags(posts);
 
         return posts.map(post -> {
             Long archiveCount = archiveService.getArchiveCountByPostId(post.getId());
-            return PostDto.builder()
-                    .id(post.getId())
-                    .name(post.getName())
-                    .imageURL(post.getImageURL())
-                    .exhibitionURL(post.getExhibitionURL())
-                    .description(post.getDescription())
-                    .postType(post.getPostType())
-                    .postDate(PostDateDto.from(postDateRepository.findByPostId(post.getId())))
-                    .archived(archiveCount)
-                    .tags(TagDto.from(tags))
-                    .build();
+            PostDateDto postDateDto = PostDateDto.from(postDateRepository.findByPostId(post.getId()));
+            List<TagDto> tagDtos =TagDto.from(tags);
+            return PostDto.from(post,archiveCount,postDateDto,tagDtos);
         });
+    }
+
+    public Slice<PostDto> getArchiveByUserId(Long id, Pageable pageable) {
+        Slice<Post> posts = postRepository.findArchiveByUserId(id,pageable);
+        List<Tag> tags = findAllTags(posts);
+
+        return posts.map(post -> {
+            Long archiveCount = archiveService.getArchiveCountByPostId(post.getId());
+            PostDateDto postDateDto = PostDateDto.from(postDateRepository.findByPostId(post.getId()));
+            List<TagDto> tagDtos =TagDto.from(tags);
+            return PostDto.from(post,archiveCount,postDateDto,tagDtos);
+        });
+    }
+
+    public Slice<PostDto> getArchiveByUserIdAndType(Long id, String postType, Pageable pageable) {
+        Slice<Post> posts = postRepository.findArchiveByUserIdAndPostType(id,postType,pageable);
+        List<Tag> tags = findAllTags(posts);
+
+        return posts.map(post -> {
+            Long archiveCount = archiveService.getArchiveCountByPostId(post.getId());
+            PostDateDto postDateDto = PostDateDto.from(postDateRepository.findByPostId(post.getId()));
+            List<TagDto> tagDtos =TagDto.from(tags);
+            return PostDto.from(post,archiveCount,postDateDto,tagDtos);
+        });
+
     }
 }

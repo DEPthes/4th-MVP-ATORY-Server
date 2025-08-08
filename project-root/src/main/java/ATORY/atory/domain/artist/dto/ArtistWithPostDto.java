@@ -1,5 +1,6 @@
 package ATORY.atory.domain.artist.dto;
 
+import ATORY.atory.domain.artist.entity.Artist;
 import ATORY.atory.domain.post.dto.PostDto;
 import ATORY.atory.domain.user.dto.UserDto;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -7,6 +8,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.data.domain.Slice;
 
 import java.util.List;
 
@@ -59,4 +61,20 @@ public class ArtistWithPostDto {
         this.owner = owner;
         this.login = login;
     }
+
+    public static ArtistWithPostDto from(Artist artist, UserDto userDto,
+                                         Slice<PostDto> posts,boolean owner,boolean login) {
+        return ArtistWithPostDto.builder()
+                .id(artist.getId())
+                .user(userDto)
+                .birth(artist.getBirth())
+                .educationBackground(artist.getEducationBackground())
+                .disclosureStatus(artist.getDisclosureStatus())
+                .posts(posts.getContent())
+                .hasNext(posts.hasNext())
+                .owner(owner)
+                .login(login)
+                .build();
+    }
+
 }
