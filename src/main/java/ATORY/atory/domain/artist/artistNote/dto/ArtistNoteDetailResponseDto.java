@@ -5,26 +5,34 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
 @Getter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ArtistNoteListResponseDto {
+public class ArtistNoteDetailResponseDto {
     private Long noteId;
-    private String thumbnailUrl;
-    private ArtistInfo artist;
+    private String title;
+    private String content;
+    private List<String> imageUrls;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
+    private ArtistProfileSummary artist;
     
     @Getter
     @Builder
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class ArtistInfo {
+    public static class ArtistProfileSummary {
         private Long id;
         private String nickname;
         private String englishName;
         private String job;
-        private String phone;
         private String email;
+        private String phone;
         private String statusMessage;
+        private String profileImageUrl;
     }
 } 

@@ -12,8 +12,10 @@ import ATORY.atory.domain.user.dto.GalleryProfileRequestDto;
 import ATORY.atory.domain.user.dto.GalleryProfileResponseDto;
 import ATORY.atory.domain.user.dto.ProfileUpdateRequestDto;
 import ATORY.atory.domain.user.dto.GnbUserInfoResponseDto;
+import ATORY.atory.domain.user.dto.AuthMeResponseDto;
+import ATORY.atory.domain.user.dto.UserProfileResponseDto;
 import ATORY.atory.domain.user.entity.User;
-import ATORY.atory.domain.user.repository.UseRepository;
+import ATORY.atory.domain.user.repository.UserRepository;
 import ATORY.atory.domain.artist.entity.YouthArtist;
 import ATORY.atory.domain.artist.repository.YouthArtistRepository;
 import ATORY.atory.domain.collector.entity.ArtCollector;
@@ -40,7 +42,7 @@ import java.time.LocalDate;
 @Transactional
 public class UserService {
 
-    private final UseRepository userRepository;
+    private final UserRepository userRepository;
     private final YouthArtistRepository youthArtistRepository;
     private final ArtCollectorRepository artCollectorRepository;
     private final GalleryRepository galleryRepository;
@@ -80,8 +82,12 @@ public class UserService {
                         return userRepository.save(newUser);
                     });
 
-            String token = jwtProvider.createToken(user.getId());
-            return new GoogleLoginResponseDto(token, user.getEmail(), user.getUsername());
+                    String token = jwtProvider.createToken(user.getId());
+        return GoogleLoginResponseDto.builder()
+                .accessToken(token)
+                .expiresIn("86400")
+                .tokenType("Bearer")
+                .build();
         } catch (IllegalArgumentException e) {
             throw e;
         } catch (Exception e) {
@@ -277,7 +283,110 @@ public class UserService {
     }
 
     public void logout(Long userId) {
-        // 로그아웃 로직 (필요시 구현)
+        // 로그아웃 처리 로직 (현재는 단순히 메서드만 존재)
+        log.info("User logged out: {}", userId);
+    }
+
+    public AuthMeResponseDto getCurrentUserInfo(Long userId) {
+        User user = findById(userId);
+        
+        // 사용자 역할 확인 (작가/수집가/갤러리)
+        String job = determineUserJob(userId);
+        
+        return AuthMeResponseDto.builder()
+                .userId(user.getId())
+                .job(job)
+                .nickname(user.getUsername())
+                .profileImageUrl(getProfileImageUrl(user.getProfileImgUrl()))
+                .build();
+    }
+
+    private String determineUserJob(Long userId) {
+        // YouthArtist 확인
+        if (youthArtistRepository.findByUserId(userId) != null) {
+            return "ARTIST";
+        }
+        
+        // ArtCollector 확인
+        if (artCollectorRepository.findByUserId(userId) != null) {
+            return "COLLECTOR";
+        }
+        
+        // Gallery 확인
+        if (galleryRepository.findByUserId(userId) != null) {
+            return "GALLERY";
+        }
+        
+        // 기본값
+        return "USER";
+    }
+
+    private String getProfileImageUrl(String profileImgUrl) {
+        if (profileImgUrl == null || profileImgUrl.trim().isEmpty()) {
+            return "https://atory-s3-bucket.s3.ap-northeast-2.amazonaws.com/default-profile.png";
+        }
+        
+        // S3 URL인지 확인 
+        if (profileImgUrl.startsWith("https://atory-s3-bucket.s3.ap-northeast-2.amazonaws.com/")) {
+            return profileImgUrl;
+        }
+        
+        // 외부 URL인 경우 그대로 반환
+        if (profileImgUrl.startsWith("http")) {
+            return profileImgUrl;
+        }
+        
+        // 상대 경로인 경우 S3 URL로 변환
+        return "https://atory-s3-bucket.s3.ap-northeast-2.amazonaws.com/" + profileImgUrl;
+    }
+
+    public UserProfileResponseDto getUserProfile(Long userId) {
+        User user = findById(userId);
+        
+        // 사용자 역할 확인
+        String job = determineUserJob(userId);
+        
+        // 전화번호 마스킹 처리
+        String maskedPhone = maskPhoneNumber(user.getPhone());
+        
+        // 상태 메시지 가져오기 (작가인 경우)
+        String statusMessage = "";
+        if ("ARTIST".equals(job)) {
+            YouthArtist youthArtist = youthArtistRepository.findByUserId(userId);
+            if (youthArtist != null) {
+                statusMessage = youthArtist.getStatusMessage();
+            }
+        }
+        
+        return UserProfileResponseDto.builder()
+                .nickname(user.getUsername())
+                .englishName("") // TODO: 영어 이름 필드 추가 필요
+                .job(job)
+                .email(user.getEmail())
+                .phone(maskedPhone)
+                .statusMessage(statusMessage)
+                .profileImageUrl(getProfileImageUrl(user.getProfileImgUrl()))
+                .build();
+    }
+
+    private String maskPhoneNumber(String phone) {
+        if (phone == null || phone.trim().isEmpty()) {
+            return "";
+        }
+        
+        // 숫자만 추출
+        String numbers = phone.replaceAll("[^0-9]", "");
+        
+        if (numbers.length() == 11) {
+            // 010-****-5678 형태로 마스킹
+            return numbers.substring(0, 3) + "-****-" + numbers.substring(7);
+        } else if (numbers.length() == 10) {
+            // 02-****-5678 형태로 마스킹
+            return numbers.substring(0, 2) + "-****-" + numbers.substring(6);
+        } else {
+            // 길이가 맞지 않으면 원본 반환
+            return phone;
+        }
     }
 
     private String getAccessToken(String code) {

@@ -46,48 +46,37 @@ public class GoogleOAuthService {
         try {
             // 1. Authorization code로 access token 요청
             GoogleTokenResponse tokenResponse = getAccessToken(request.getCode());
-            
+
             // 2. Access token으로 사용자 정보 요청
             GoogleUserInfo userInfo = getUserInfo(tokenResponse.getAccessToken());
-            
+
             // 3. 사용자 정보로 DB에서 사용자 조회 또는 생성
-            User user = findOrCreateUser(userInfo);
-            
+            boolean isNewUser = false;
+            User user = userRepository.findByGoogleID(userInfo.getId())
+                    .orElseGet(() -> {
+                        isNewUser = true;
+                        return createUser(userInfo);
+                    });
+
             // 4. JWT 토큰 생성
             String accessToken = jwtTokenProvider.generateAccessToken(user.getId(), user.getEmail());
             String refreshToken = jwtTokenProvider.generateRefreshToken(user.getId(), user.getEmail());
-            
-            // 5. 응답 생성
+
             return GoogleLoginResponseDto.builder()
                     .accessToken(accessToken)
                     .refreshToken(refreshToken)
                     .tokenType("Bearer")
-                    .expiresIn(3600L) // 1시간
+                    .expiresIn("3600")
                     .email(user.getEmail())
                     .username(user.getUsername())
                     .picture(user.getProfileImgUrl())
                     .provider(user.getProvider())
-                    .isNewUser(user.getGoogleID() == null) // 새로 생성된 사용자인지 확인
+                    .isNewUser(isNewUser)
                     .build();
-                    
+
         } catch (HttpClientErrorException e) {
             log.error("Google OAuth API 호출 실패: {} - {}", e.getStatusCode(), e.getResponseBodyAsString());
-            
-            // Google OAuth 정책 위반 등의 경우 더 구체적인 에러 메시지
-            if (e.getStatusCode() == HttpStatus.BAD_REQUEST) {
-                String errorBody = e.getResponseBodyAsString();
-                if (errorBody.contains("OAuth 2.0 policy")) {
-                    throw new RuntimeException("Google OAuth 정책 위반: Google Cloud Console에서 OAuth 설정을 확인해주세요.", e);
-                } else if (errorBody.contains("invalid_request")) {
-                    throw new RuntimeException("잘못된 OAuth 요청: authorization code가 유효하지 않습니다.", e);
-                } else {
-                    throw new RuntimeException("Google OAuth 인증 실패: " + e.getResponseBodyAsString(), e);
-                }
-            } else if (e.getStatusCode() == HttpStatus.UNAUTHORIZED) {
-                throw new RuntimeException("Google OAuth 인증 실패: 클라이언트 ID 또는 시크릿이 잘못되었습니다.", e);
-            } else {
-                throw new RuntimeException("Google OAuth API 호출 실패: " + e.getStatusCode(), e);
-            }
+            throw new RuntimeException("Google OAuth 인증 실패: " + e.getResponseBodyAsString(), e);
         } catch (Exception e) {
             log.error("Google OAuth 처리 중 예상치 못한 오류 발생", e);
             throw new RuntimeException("Google OAuth 인증 처리 중 오류가 발생했습니다.", e);
@@ -104,7 +93,7 @@ public class GoogleOAuthService {
         );
 
         HttpEntity<String> request = new HttpEntity<>(requestBody, headers);
-        
+
         ResponseEntity<GoogleTokenResponse> response = restTemplate.postForEntity(
                 GOOGLE_TOKEN_URL, request, GoogleTokenResponse.class
         );
@@ -121,7 +110,7 @@ public class GoogleOAuthService {
         headers.setBearerAuth(accessToken);
 
         HttpEntity<String> request = new HttpEntity<>(headers);
-        
+
         ResponseEntity<GoogleUserInfo> response = restTemplate.exchange(
                 GOOGLE_USER_INFO_URL, HttpMethod.GET, request, GoogleUserInfo.class
         );
@@ -133,43 +122,18 @@ public class GoogleOAuthService {
         return response.getBody();
     }
 
-    private User findOrCreateUser(GoogleUserInfo googleUserInfo) {
-        // Google ID로 사용자 조회
-        Optional<User> existingUser = userRepository.findByGoogleID(googleUserInfo.getId());
-        
-        if (existingUser.isPresent()) {
-            User user = existingUser.get();
-            // 기존 사용자 정보 업데이트
-            user.updateSocialInfo(googleUserInfo.getId(), "GOOGLE");
-            if (googleUserInfo.getPicture() != null) {
-                user.updateProfileImgUrl(googleUserInfo.getPicture());
-            }
-            return userRepository.save(user);
-        }
-
-        // 이메일로도 조회해보기 (기존 사용자가 Google 로그인을 처음 시도하는 경우)
-        Optional<User> userByEmail = userRepository.findByEmail(googleUserInfo.getEmail());
-        if (userByEmail.isPresent()) {
-            User user = userByEmail.get();
-            user.updateSocialInfo(googleUserInfo.getId(), "GOOGLE");
-            if (googleUserInfo.getPicture() != null) {
-                user.updateProfileImgUrl(googleUserInfo.getPicture());
-            }
-            return userRepository.save(user);
-        }
-
-        // 새 사용자 생성
+    private User createUser(GoogleUserInfo googleUserInfo) {
         User newUser = User.createUser(
                 googleUserInfo.getName(),
                 googleUserInfo.getEmail(),
                 googleUserInfo.getId(),
                 "GOOGLE"
         );
-        
+
         if (googleUserInfo.getPicture() != null) {
             newUser.updateProfileImgUrl(googleUserInfo.getPicture());
         }
 
         return userRepository.save(newUser);
     }
-} 
+}

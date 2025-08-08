@@ -20,3 +20,7 @@ server:
     include-stacktrace: always
   #port 설정
   port: 8080
+
+google:
+  redirect:
+    uri: https://oauth.pstmn.io/v1/callback

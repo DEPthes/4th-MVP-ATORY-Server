@@ -11,4 +11,5 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class GoogleOAuthCallbackRequest {
     private String code;
-} 
+    private String redirectUri;
+}

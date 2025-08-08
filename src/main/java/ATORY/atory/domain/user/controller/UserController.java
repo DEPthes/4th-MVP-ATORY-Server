@@ -57,6 +57,13 @@ public class UserController {
         return ResponseEntity.ok(responseDto);
     }
 
+    @PostMapping("/users/gallery/profile/setup")
+    @Operation(summary = "갤러리 프로필 설정", description = "갤러리 회원의 프로필을 설정합니다.")
+    public ResponseEntity<GalleryProfileResponseDto> setupGalleryProfile(@RequestBody GalleryProfileRequestDto requestDto) {
+        GalleryProfileResponseDto responseDto = userService.setupGalleryProfile(requestDto);
+        return ResponseEntity.ok(responseDto);
+    }
+
     @GetMapping("/user/gnb-info")
     @Operation(summary = "GNB 사용자 정보 조회", description = "GNB에서 사용할 로그인 사용자 정보를 조회합니다.")
     public ResponseEntity<GnbUserInfoResponseDto> getGnbUserInfo(HttpServletRequest request) {
