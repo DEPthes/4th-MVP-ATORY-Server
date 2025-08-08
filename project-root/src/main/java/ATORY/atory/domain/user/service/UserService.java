@@ -19,7 +19,7 @@ public class UserService {
     private final UseRepository useRepository;
     private final FollowService followService;
 
-    public UserDto findById(Long Id){
+    public UserDto getById(Long Id){
         User user = useRepository.findById(Id).orElseThrow(() -> new MapperException(ErrorCode.SER_NOT_FOUND));
         int follower =  followService.countFollower(user).intValue();
         int following = followService.countFollowing(user).intValue();
@@ -27,7 +27,6 @@ public class UserService {
         return UserDto.builder()
                 .id(user.getId())
                 .username(user.getUsername())
-                .googleID(user.getGoogleID())
                 .email(user.getEmail())
                 .introduction(user.getIntroduction())
                 .contact(user.getContact())

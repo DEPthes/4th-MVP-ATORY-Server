@@ -1,14 +1,11 @@
 package ATORY.atory.domain.artist.entity;
 
-import ATORY.atory.domain.artist.artistNote.entity.ArtistNote;
 import ATORY.atory.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @NoArgsConstructor
@@ -24,11 +21,6 @@ public class Artist {
     @JoinColumn(name = "user_id", unique = true, nullable = false)
     private User user;
 
-    @OneToMany(mappedBy = "artist", fetch = FetchType.LAZY)
-    private List<ArtistNote> artistNotes = new ArrayList<>();
-
-
-
     private String birth;
     private String educationBackground;
 
@@ -36,9 +28,8 @@ public class Artist {
     private Boolean disclosureStatus = Boolean.TRUE;
 
     @Builder
-    public Artist(User user,List<ArtistNote> artistNotes, String birth, String educationBackground, Boolean disclosureStatus) {
+    public Artist(User user, String birth, String educationBackground, Boolean disclosureStatus) {
         this.user = user;
-        this.artistNotes = artistNotes;
         this.birth = birth;
         this.educationBackground = educationBackground;
         this.disclosureStatus = disclosureStatus;

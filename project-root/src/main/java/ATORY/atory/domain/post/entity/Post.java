@@ -35,15 +35,9 @@ public class Post {
     private String description;
     private PostType postType;
 
-    @OneToOne(mappedBy = "post", cascade = CascadeType.ALL, optional = false)
-    private PostDate postDate;
-
-    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<TagPost> tagPosts = new ArrayList<>();
-
 
     @Builder
-    public Post(Long id, User user, String name, String imageURL, String exhibitionURL, String description, PostType postType,PostDate postDate, List<TagPost> tagPosts) {
+    public Post(Long id, User user, String name, String imageURL, String exhibitionURL, String description, PostType postType) {
         this.id = id;
         this.user = user;
         this.name = name;
@@ -51,7 +45,5 @@ public class Post {
         this.exhibitionURL = exhibitionURL;
         this.description = description;
         this.postType = postType;
-        this.postDate = postDate;
-        this.tagPosts = tagPosts;
     }
 }
