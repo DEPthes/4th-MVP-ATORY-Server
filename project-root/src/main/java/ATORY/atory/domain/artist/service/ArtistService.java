@@ -7,6 +7,7 @@ import ATORY.atory.domain.artist.dto.ArtistWithPostDto;
 import ATORY.atory.domain.artist.entity.Artist;
 import ATORY.atory.domain.artist.repository.ArtistRepository;
 import ATORY.atory.domain.post.dto.PostDto;
+import ATORY.atory.domain.post.entity.PostType;
 import ATORY.atory.domain.post.service.PostService;
 import ATORY.atory.domain.user.dto.UserDto;
 import ATORY.atory.domain.user.entity.User;
@@ -65,7 +66,7 @@ public class ArtistService {
                 .build();
     }
 
-    public ArtistWithPostDto getPostById(Long id, String postType, Pageable pageable,User loginUser) {
+    public ArtistWithPostDto getPostById(Long id, PostType postType, Pageable pageable, User loginUser) {
         Artist found = getArtistById(id);
         User user = found.getUser();
 
@@ -79,7 +80,7 @@ public class ArtistService {
         return ArtistWithPostDto.from(found,userDto,posts,owner,login);
     }
 
-    public ArtistWithPostDto getPostByIdAndTag(Long id, String postType, String tag, Pageable pageable,User loginUser) {
+    public ArtistWithPostDto getPostByIdAndTag(Long id, PostType postType, String tag, Pageable pageable,User loginUser) {
         Artist found = getArtistById(id);
 
         User user = found.getUser();
@@ -110,7 +111,7 @@ public class ArtistService {
     }
 
     
-    public ArtistWithPostDto getArtistByIdAndType(Long id, String postType, Pageable pageable, User loginUser) {
+    public ArtistWithPostDto getArtistByIdAndType(Long id, PostType postType, Pageable pageable, User loginUser) {
         Artist found = getArtistById(id);
         User user = found.getUser();
         UserDto userDto = userService.getById(user.getId());

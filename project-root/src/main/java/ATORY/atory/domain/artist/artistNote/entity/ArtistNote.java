@@ -20,6 +20,7 @@ public class ArtistNote {
     @JoinColumn(name = "artist_id")
     private Artist artist;
 
+    @Enumerated(EnumType.STRING)
     private ArtistNoteType artistNoteType;
 
     private String year;

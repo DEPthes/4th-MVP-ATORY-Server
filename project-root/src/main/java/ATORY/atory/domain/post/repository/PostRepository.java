@@ -1,6 +1,7 @@
 package ATORY.atory.domain.post.repository;
 
 import ATORY.atory.domain.post.entity.Post;
+import ATORY.atory.domain.post.entity.PostType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -19,20 +20,27 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             "WHERE p.user.id = :userId AND p.postType = :postType " +
             "ORDER BY pd.createdAt DESC")
     Slice<Post> findPostsByUserId(@Param("userId") Long userId,
-                                  @Param("postType") String postType,
+                                  @Param("postType") PostType postType,
                                   Pageable pageable);
 
 
-    @Query("SELECT DISTINCT p FROM Post p " +
-            "JOIN TagPost tp ON p.id = tp.post.id " +
-            "JOIN Tag t ON tp.tag.id = t.id " +
-            "JOIN PostDate pd ON p.id = pd.post.id " +
-            "WHERE p.user.id = :userId " +
-            "AND p.postType = :postType " +
-            "AND t.name = :tagName " +
-            "ORDER BY pd.createdAt DESC")
+    @Query("""
+SELECT p
+FROM Post p
+JOIN PostDate pd ON p.id = pd.post.id
+WHERE p.id IN (
+    SELECT DISTINCT p2.id
+    FROM Post p2
+    JOIN TagPost tp ON p2.id = tp.post.id
+    JOIN Tag t ON tp.tag.id = t.id
+    WHERE p2.user.id = :userId
+      AND p2.postType = :postType
+      AND t.name = :tagName
+)
+ORDER BY pd.createdAt DESC
+""")
     Slice<Post> findPostsByUserIdAndTag(@Param("userId") Long userId,
-                                               @Param("postType") String postType,
+                                               @Param("postType") PostType postType,
                                                @Param("tagName") String tagName,
                                                Pageable pageable);
 
@@ -51,7 +59,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             "AND p.postType = :postType "+
             "ORDER BY pd.createdAt DESC")
     Slice<Post> findArchiveByUserIdAndPostType(@Param("userId") Long userId,
-                                    @Param("postType") String postType,
+                                    @Param("postType") PostType postType,
                                     Pageable pageable);
 
 }

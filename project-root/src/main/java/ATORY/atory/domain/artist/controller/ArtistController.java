@@ -3,6 +3,7 @@ package ATORY.atory.domain.artist.controller;
 import ATORY.atory.domain.artist.dto.ArtistWithArtistNoteDto;
 import ATORY.atory.domain.artist.dto.ArtistWithPostDto;
 import ATORY.atory.domain.artist.service.ArtistService;
+import ATORY.atory.domain.post.entity.PostType;
 import ATORY.atory.domain.user.entity.User;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -42,7 +43,7 @@ public class ArtistController {
             }
     )
     @GetMapping("/{id}/posts")
-    public ArtistWithPostDto findPostsById(@PathVariable Long id, @RequestParam("type") String postType, Pageable pageable,@AuthenticationPrincipal User user) {
+    public ArtistWithPostDto findPostsById(@PathVariable Long id, @RequestParam("type") PostType postType, Pageable pageable, @AuthenticationPrincipal User user) {
         return artistService.getPostById(id,postType,pageable,user);
     }
 
@@ -58,7 +59,7 @@ public class ArtistController {
             }
     )
     @GetMapping("/{id}/posts/tag")
-    public ArtistWithPostDto findPostsByIdAndTag(@PathVariable Long id,@RequestParam("type") String postType,
+    public ArtistWithPostDto findPostsByIdAndTag(@PathVariable Long id,@RequestParam("type") PostType postType,
                                                  @RequestParam("tag") String tag, Pageable pageable,
                                                  @AuthenticationPrincipal User user) {
         return artistService.getPostByIdAndTag(id,postType,tag,pageable,user);
@@ -88,7 +89,7 @@ public class ArtistController {
     )
     @GetMapping("/{id}/archives/type")
     public ArtistWithPostDto findArchivesByIdAndType(@PathVariable Long id,
-                                                     @RequestParam("type") String postType, Pageable pageable,
+                                                     @RequestParam("type") PostType postType, Pageable pageable,
                                                      @AuthenticationPrincipal User user) {
         return artistService.getArtistByIdAndType(id,postType,pageable,user);
     }

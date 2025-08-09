@@ -4,6 +4,7 @@ import ATORY.atory.domain.archive.service.ArchiveService;
 import ATORY.atory.domain.post.dto.PostDateDto;
 import ATORY.atory.domain.post.dto.PostDto;
 import ATORY.atory.domain.post.entity.Post;
+import ATORY.atory.domain.post.entity.PostType;
 import ATORY.atory.domain.post.repository.PostDateRepository;
 import ATORY.atory.domain.post.repository.PostRepository;
 import ATORY.atory.domain.tag.dto.TagDto;
@@ -39,7 +40,7 @@ public class PostService {
 
     }
 
-    public Slice<PostDto> getPostsByUserId(Long id, String postType, Pageable pageable) {
+    public Slice<PostDto> getPostsByUserId(Long id, PostType postType, Pageable pageable) {
         Slice<Post> posts = postRepository.findPostsByUserId(id,postType,pageable);
 
         List<Tag> tags = findAllTags(posts);
@@ -52,7 +53,7 @@ public class PostService {
         });
     }
 
-    public Slice<PostDto> getPostsByUserIdAndTag(Long id, String postType,String tag, Pageable pageable) {
+    public Slice<PostDto> getPostsByUserIdAndTag(Long id, PostType postType,String tag, Pageable pageable) {
         Slice<Post> posts = postRepository.findPostsByUserIdAndTag(id,postType,tag,pageable);
 
         List<Tag> tags = findAllTags(posts);
@@ -77,7 +78,7 @@ public class PostService {
         });
     }
 
-    public Slice<PostDto> getArchiveByUserIdAndType(Long id, String postType, Pageable pageable) {
+    public Slice<PostDto> getArchiveByUserIdAndType(Long id, PostType postType, Pageable pageable) {
         Slice<Post> posts = postRepository.findArchiveByUserIdAndPostType(id,postType,pageable);
         List<Tag> tags = findAllTags(posts);
 
