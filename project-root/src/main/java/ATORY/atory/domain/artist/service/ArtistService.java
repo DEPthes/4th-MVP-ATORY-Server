@@ -2,6 +2,7 @@ package ATORY.atory.domain.artist.service;
 
 import ATORY.atory.domain.artist.artistNote.dto.ArtistNoteDto;
 import ATORY.atory.domain.artist.artistNote.service.ArtistNoteService;
+import ATORY.atory.domain.artist.dto.ArtistDto;
 import ATORY.atory.domain.artist.dto.ArtistWithArtistNoteDto;
 import ATORY.atory.domain.artist.dto.ArtistWithPostDto;
 import ATORY.atory.domain.artist.entity.Artist;
@@ -50,6 +51,24 @@ public class ArtistService {
 
     }
 
+    public ArtistDto getArtistDtoById(Long id, User loginUser) {
+        Artist found = getArtistById(id);
+        boolean login = isLogin(loginUser);
+        boolean owner = isOwner(found,loginUser,login);
+
+        return ArtistDto.builder()
+                .id(id)
+                .user(userService.getById(found.getUser().getId()))
+                .birth(found.getBirth())
+                .educationBackground(found.getEducationBackground())
+                .disclosureStatus(found.getDisclosureStatus())
+                .owner(owner)
+                .login(login)
+                .build();
+
+    }
+
+
     public ArtistWithArtistNoteDto getArtistNoteById(Long id,User loginUser) {
         Artist found = getArtistById(id);
 
@@ -57,27 +76,12 @@ public class ArtistService {
         boolean owner = isOwner(found,loginUser,login);
 
         return ArtistWithArtistNoteDto.builder()
-                .user(userService.getById(found.getId()))
+                .id(found.getId())
+                .username(found.getUser().getUsername())
                 .artistNotes(ArtistNoteDto.from(artistNoteService.getByArtistId(id)))
-                .birth(found.getBirth())
-                .educationBackground(found.getEducationBackground())
-                .disclosureStatus(found.getDisclosureStatus())
+                .login(login)
                 .owner(owner)
                 .build();
-    }
-
-    public ArtistWithPostDto getPostById(Long id, PostType postType, Pageable pageable, User loginUser) {
-        Artist found = getArtistById(id);
-        User user = found.getUser();
-
-        boolean login = isLogin(loginUser);
-        boolean owner = isOwner(found,loginUser,login);
-
-        UserDto userDto = userService.getById(user.getId());
-
-        Slice<PostDto> posts = postService.getPostsByUserId(user.getId(), postType,pageable);
-
-        return ArtistWithPostDto.from(found,userDto,posts,owner,login);
     }
 
     public ArtistWithPostDto getPostByIdAndTag(Long id, PostType postType, String tag, Pageable pageable,User loginUser) {
@@ -87,39 +91,37 @@ public class ArtistService {
 
         boolean login = isLogin(loginUser);
         boolean owner = isOwner(found,loginUser,login);
-
-        UserDto userDto = userService.getById(user.getId());
-
-        Slice<PostDto> posts = postService.getPostsByUserIdAndTag(user.getId(), postType,tag,pageable);
-        return ArtistWithPostDto.from(found,userDto,posts,owner,login);
-
-    }
-
-
-    public ArtistWithPostDto getArchivesById(Long id, Pageable pageable, User loginUser) {
-        Artist found = getArtistById(id);
-        User user = found.getUser();
-        UserDto userDto = userService.getById(user.getId());
-
-        boolean login = isLogin(loginUser);
-        boolean owner = isOwner(found,loginUser,login);
-
-        Slice<PostDto> posts = postService.getArchiveByUserId(user.getId(),pageable);
-
-        return ArtistWithPostDto.from(found,userDto,posts,owner,login);
+        Slice<PostDto> posts;
+        if(tag!=null && !tag.isEmpty()) {
+            posts = postService.getPostsByUserIdAndTag(user.getId(), postType,tag,pageable);
+        }
+        else {
+            posts = postService.getPostsByUserId(user.getId(), postType,pageable);
+        }
+        return ArtistWithPostDto.from(found,user.getUsername(),posts,owner,login);
 
     }
 
     
-    public ArtistWithPostDto getArtistByIdAndType(Long id, PostType postType, Pageable pageable, User loginUser) {
+    public ArtistWithPostDto getArchiveByIdAndType(Long id, PostType postType, Pageable pageable, User loginUser) {
         Artist found = getArtistById(id);
         User user = found.getUser();
-        UserDto userDto = userService.getById(user.getId());
 
         boolean login = isLogin(loginUser);
         boolean owner = isOwner(found,loginUser,login);
+        Slice<PostDto> posts;
+        if(postType!=null)
+        {
+            posts= postService.getArchiveByUserIdAndType(user.getId(), postType,pageable);
 
-        Slice<PostDto> posts = postService.getArchiveByUserIdAndType(user.getId(), postType,pageable);
-        return ArtistWithPostDto.from(found,userDto,posts,owner,login);
+        }
+        else{
+            posts = postService.getArchiveByUserId(user.getId(),pageable);
+
+        }
+
+        return ArtistWithPostDto.from(found,user.getUsername(),posts,owner,login);
     }
+
+
 }

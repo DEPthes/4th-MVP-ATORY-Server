@@ -22,17 +22,8 @@ public class ArtistWithPostDto {
     @Schema(description = "작가 ID", example = "1")
     private Long id;
 
-    @Schema(description = "작가의 사용자 정보")
-    private UserDto user;
-
-    @Schema(description = "작가 생년월일", example = "1980-01-01")
-    private String birth;
-
-    @Schema(description = "학력 정보", example = "명지대학교 미술학과 졸업")
-    private String educationBackground;
-
-    @Schema(description = "공개 여부", example = "true")
-    private Boolean disclosureStatus;
+    @Schema(description = "사용자 이름", example = "김철수")
+    private String username;
 
     @Schema(description = "작가 게시물 목록")
     private List<PostDto> posts;
@@ -48,28 +39,21 @@ public class ArtistWithPostDto {
 
 
     @Builder
-    public ArtistWithPostDto(Long id, UserDto user, String birth, String educationBackground,
-                             Boolean disclosureStatus,List<PostDto> posts, Boolean hasNext,
-                             Boolean owner, Boolean login, Boolean hashtag) {
+    public ArtistWithPostDto(Long id,String username,List<PostDto> posts, Boolean hasNext,
+                             Boolean owner, Boolean login) {
         this.id = id;
-        this.user = user;
-        this.birth = birth;
-        this.educationBackground = educationBackground;
-        this.disclosureStatus = disclosureStatus;
+        this.username = username;
         this.posts = posts;
         this.hasNext = hasNext;
         this.owner = owner;
         this.login = login;
     }
 
-    public static ArtistWithPostDto from(Artist artist, UserDto userDto,
+    public static ArtistWithPostDto from(Artist artist, String username,
                                          Slice<PostDto> posts,boolean owner,boolean login) {
         return ArtistWithPostDto.builder()
                 .id(artist.getId())
-                .user(userDto)
-                .birth(artist.getBirth())
-                .educationBackground(artist.getEducationBackground())
-                .disclosureStatus(artist.getDisclosureStatus())
+                .username(username)
                 .posts(posts.getContent())
                 .hasNext(posts.hasNext())
                 .owner(owner)
