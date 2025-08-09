@@ -4,6 +4,7 @@ import ATORY.atory.domain.artist.dto.ArtistWithArtistNoteDto;
 import ATORY.atory.domain.artist.dto.ArtistWithPostDto;
 import ATORY.atory.domain.artist.service.ArtistService;
 import ATORY.atory.domain.post.entity.PostType;
+import ATORY.atory.domain.user.dto.CustomUserDetails;
 import ATORY.atory.domain.user.entity.User;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -28,7 +29,8 @@ public class ArtistController {
             }
     )
     @GetMapping("/{id}")
-    public ArtistWithArtistNoteDto findArtistNoteById(@PathVariable Long id, @AuthenticationPrincipal User user) {
+    public ArtistWithArtistNoteDto findArtistNoteById(@PathVariable Long id, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        User user = customUserDetails.getUser();
         return artistService.getArtistNoteById(id,user);
     }
 
@@ -43,7 +45,8 @@ public class ArtistController {
             }
     )
     @GetMapping("/{id}/posts")
-    public ArtistWithPostDto findPostsById(@PathVariable Long id, @RequestParam("type") PostType postType, Pageable pageable, @AuthenticationPrincipal User user) {
+    public ArtistWithPostDto findPostsById(@PathVariable Long id, @RequestParam("type") PostType postType, Pageable pageable, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        User user = customUserDetails.getUser();
         return artistService.getPostById(id,postType,pageable,user);
     }
 
@@ -61,7 +64,8 @@ public class ArtistController {
     @GetMapping("/{id}/posts/tag")
     public ArtistWithPostDto findPostsByIdAndTag(@PathVariable Long id,@RequestParam("type") PostType postType,
                                                  @RequestParam("tag") String tag, Pageable pageable,
-                                                 @AuthenticationPrincipal User user) {
+                                                 @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        User user = customUserDetails.getUser();
         return artistService.getPostByIdAndTag(id,postType,tag,pageable,user);
     }
 
@@ -74,7 +78,8 @@ public class ArtistController {
             }
     )
     @GetMapping("/{id}/archives")
-    public ArtistWithPostDto findArchivesById(@PathVariable Long id, Pageable pageable,@AuthenticationPrincipal User user) {
+    public ArtistWithPostDto findArchivesById(@PathVariable Long id, Pageable pageable,@AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        User user = customUserDetails.getUser();
         return artistService.getArchivesById(id,pageable,user);
     }
 
@@ -90,7 +95,8 @@ public class ArtistController {
     @GetMapping("/{id}/archives/type")
     public ArtistWithPostDto findArchivesByIdAndType(@PathVariable Long id,
                                                      @RequestParam("type") PostType postType, Pageable pageable,
-                                                     @AuthenticationPrincipal User user) {
+                                                     @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        User user = customUserDetails.getUser();
         return artistService.getArtistByIdAndType(id,postType,pageable,user);
     }
 }
