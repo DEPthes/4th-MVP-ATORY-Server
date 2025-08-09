@@ -38,3 +38,7 @@ out/
 
 ### YML ###
 /src/main/resources/application-database.yml
+/src/main/resources/application-local.yml
+# IDE
+.idea/
+*.iml
