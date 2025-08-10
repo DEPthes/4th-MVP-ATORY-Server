@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -39,5 +40,15 @@ public class PostController {
             @AuthenticationPrincipal CustomUserDetails loginUser
     ) throws JsonProcessingException {
         return postService.updatePost(postId, postRegisterDto,files, loginUser);
+    }
+
+    @Operation(summary = "게시물 삭제", description = "기존 게시물을 삭제합니다.")
+    @DeleteMapping("/{postId}")
+    public ResponseEntity<Void> deletePost(
+            @PathVariable Long postId,
+            @AuthenticationPrincipal CustomUserDetails loginUser
+    ) {
+        postService.deletePost(postId, loginUser);
+        return ResponseEntity.noContent().build();
     }
 }

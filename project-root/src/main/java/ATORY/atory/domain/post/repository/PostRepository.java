@@ -62,5 +62,7 @@ ORDER BY pd.createdAt DESC
                                     @Param("postType") PostType postType,
                                     Pageable pageable);
 
+
+    Post findPostById(Long postId);
 }
 

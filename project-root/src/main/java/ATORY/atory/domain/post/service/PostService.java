@@ -167,6 +167,7 @@ public class PostService {
                                       List<MultipartFile> files,
                                       CustomUserDetails loginUser) throws JsonProcessingException {
         User user = loginUser.getUser();
+
         if(user==null)
         {
             throw new MapperException(ErrorCode.SER_NOT_FOUND);
@@ -174,6 +175,11 @@ public class PostService {
 
         Post post = getPost(postId)
                 .orElseThrow(() -> new MapperException(ErrorCode.POST_NOT_FOUND));
+
+        if (!post.getUser().getId().equals(user.getId())) {
+            throw new MapperException(ErrorCode.ACCESS_DENIED);
+        }
+
 
         //image변경 여부 판단 로직
         boolean hasNewFiles = files != null && !files.isEmpty();
@@ -267,5 +273,37 @@ public class PostService {
 
     public Optional<Post> getPost(Long postId) {
         return postRepository.findById(postId);
+    }
+
+
+    public void deletePost(Long postId, CustomUserDetails loginUser) throws JsonProcessingException {
+        User user = loginUser.getUser();
+        if(user==null)
+        {
+            throw new MapperException(ErrorCode.SER_NOT_FOUND);
+        }
+        Post post = getPost(postId).orElseThrow(() -> new MapperException(ErrorCode.POST_NOT_FOUND));
+
+        if (!post.getUser().getId().equals(user.getId())) {
+            throw new MapperException(ErrorCode.ACCESS_DENIED);
+        }
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        List<String> imageUrls = objectMapper.readValue(post.getImageURL(), new TypeReference<List<String>>() {});
+        for (String url : imageUrls) {
+            s3ImageService.delete(url);
+        }
+
+        List<TagPost> tagPosts = tagPostService.findByPostId(postId);
+        for (TagPost tp : tagPosts) {
+            tagPostService.deleteByTagNameAndPostId(tp.getTag().getName(), postId);
+        }
+
+        PostDate postDate = postDateRepository.findByPostId(postId);
+        if (postDate != null) {
+            postDateRepository.delete(postDate);
+        }
+
+        postRepository.delete(post);
     }
 }
