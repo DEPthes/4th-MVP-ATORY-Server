@@ -44,3 +44,7 @@ out/
 /src/main/resources/application-*.local.yml
 .env
 *.keystore
+src/main/resources/application-local.yml
+src/main/resources/database.yml
+src/main/resources/application-local.yml
+src/main/resources/application-database.yml
