@@ -13,12 +13,12 @@ import org.springframework.stereotype.Repository;
 public interface PostRepository extends JpaRepository<Post, Long> {
 
     @Query("""
-           select p
-             from Post p
-            where p.user.id = :userId
-              and p.postType = :postType
-         order by p.id desc
-           """)
+        select p
+          from Post p
+         where p.user.id = :userId
+           and p.postType = :postType
+      order by p.id desc
+    """)
     Page<Post> findPostsByUserIdAndPostType(@Param("userId") Long userId,
                                             @Param("postType") PostType postType,
                                             Pageable pageable);
