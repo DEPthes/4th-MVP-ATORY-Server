@@ -20,6 +20,7 @@ import ATORY.atory.global.exception.ErrorCode;
 import ATORY.atory.global.exception.MapperException;
 import ATORY.atory.global.s3.S3ImageService;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +32,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -157,9 +160,112 @@ public class PostService {
             }
         }
 
-
-
-
         return PostRegisterDto.from(saved,PostDateDto.from(postDate),TagDto.from(savedTags));
+    }
+
+    public PostRegisterDto updatePost(Long postId, PostRegisterDto postRegisterDto,
+                                      List<MultipartFile> files,
+                                      CustomUserDetails loginUser) throws JsonProcessingException {
+        User user = loginUser.getUser();
+        if(user==null)
+        {
+            throw new MapperException(ErrorCode.SER_NOT_FOUND);
+        }
+
+        Post post = getPost(postId)
+                .orElseThrow(() -> new MapperException(ErrorCode.POST_NOT_FOUND));
+
+        //image변경 여부 판단 로직
+        boolean hasNewFiles = files != null && !files.isEmpty();
+        ObjectMapper objectMapper = new ObjectMapper();
+        List<String> requestedUrls =  objectMapper.readValue(postRegisterDto.getImageURL(),
+                new TypeReference<List<String>>() {}
+        );
+        List<String> urlsInDB = objectMapper.readValue(post.getImageURL(), new TypeReference<List<String>>() {});
+        boolean existingUrlsChanged = !new HashSet<>(requestedUrls).equals(new HashSet<>(urlsInDB));
+
+        if(hasNewFiles||existingUrlsChanged)
+        {
+            //image변경시 변경사항 반영 로직
+            
+            //삭제할 이미지 url 추출
+            List<String> urlsToDelete = urlsInDB.stream()
+                    .filter(url -> !requestedUrls.contains(url))
+                    .toList();
+
+            //S3에서 삭제
+            for (String url : urlsToDelete) {
+                s3ImageService.delete(url); // 삭제 메서드 필요
+            }
+
+            // 새 파일 업로드
+            List<String> uploadedUrls = new ArrayList<>();
+            if (hasNewFiles) {
+                uploadedUrls = files.stream()
+                        .map(s3ImageService::upload)
+                        .collect(Collectors.toList());
+            }
+
+            // 최종 이미지 URL :  + 새 업로드 URL
+            List<String> finalImageUrls = new ArrayList<>(requestedUrls);
+            finalImageUrls.addAll(uploadedUrls);
+
+            // JSON으로 변환 후 Post 엔티티에 저장
+            String finalImageUrlJson = objectMapper.writeValueAsString(finalImageUrls);
+            post.setImageURL(finalImageUrlJson);
+
+        }
+        //Post의 요소들을 요청으로 받은값으로 변경
+        post.setName(postRegisterDto.getName());
+        post.setExhibitionURL(postRegisterDto.getExhibitionURL());
+        post.setDescription(postRegisterDto.getDescription());
+        post.setPostType(postRegisterDto.getPostType());
+
+        //PostDate의 수정시간 변경
+        PostDate postDate = postDateRepository.findByPostId(post.getId());
+        postDate.setModifiedAt(LocalDateTime.now());
+        postDateRepository.save(postDate);
+
+        //Tag를 입력받은 값으로 변경 및 사용되어지지않는 Tag삭제
+        List<TagDto> tagPostInDB = tagPostService.findByPostId(postId).stream()
+                .map(TagPost::getTag)
+                .map(tag -> TagDto.from(tag))
+                .toList();
+        List<TagDto> requestedTagPost = postRegisterDto.getTags();
+        boolean existingTagChanged = !new HashSet<>(tagPostInDB).equals(new HashSet<>(requestedTagPost));
+
+        if(existingTagChanged)
+        {
+            List<TagDto> tagsToDelete = tagPostInDB.stream()
+                    .filter(tag -> !requestedTagPost.contains(tag))
+                    .toList();
+
+            for (TagDto tagDto : tagsToDelete) {
+                tagPostService.deleteByTagNameAndPostId(tagDto.getName(),postId);
+            }
+
+            List<TagDto> uploadedNewTags = requestedTagPost.stream()
+                    .filter(tag -> !tagPostInDB.contains(tag))
+                    .toList();
+
+            for (TagDto tagDto : uploadedNewTags) {
+                Tag tag = tagService.findByName(tagDto.getName())
+                        .orElseGet(() -> tagService.save(
+                                Tag.builder().name(tagDto.getName()).build()
+                        ));
+
+                TagPost tagPost = TagPost.builder()
+                        .post(post)
+                        .tag(tag)
+                        .build();
+                tagPostService.save(tagPost);
+            }
+        }
+
+        return PostRegisterDto.from(post,PostDateDto.from(postDate),postRegisterDto.getTags());
+    }
+
+    public Optional<Post> getPost(Long postId) {
+        return postRepository.findById(postId);
     }
 }

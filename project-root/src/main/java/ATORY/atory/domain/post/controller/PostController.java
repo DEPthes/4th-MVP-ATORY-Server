@@ -24,8 +24,20 @@ public class PostController {
 
     @Operation(summary = "게시물 등록", description = "로그인한 사용자가 게시물을 등록합니다.")
     @PostMapping
-    public PostRegisterDto createPost(@RequestBody PostRegisterDto postRegisterDto, @RequestParam("file") List<MultipartFile> files, @AuthenticationPrincipal CustomUserDetails user) throws JsonProcessingException {
+    public PostRegisterDto createPost(@RequestPart("post") PostRegisterDto postRegisterDto,
+                                      @RequestPart(value = "file", required = false) List<MultipartFile> files,
+                                      @RequestPart CustomUserDetails user) throws JsonProcessingException {
         return postService.createPost(postRegisterDto,files,user);
     }
 
+    @Operation(summary = "게시물 수정", description = "기존 게시물을 수정합니다.")
+    @PutMapping("/{postId}")
+    public PostRegisterDto updatePost(
+            @PathVariable Long postId,
+            @RequestPart("post") PostRegisterDto postRegisterDto,
+            @RequestPart(value = "file", required = false) List<MultipartFile> files,
+            @AuthenticationPrincipal CustomUserDetails loginUser
+    ) throws JsonProcessingException {
+        return postService.updatePost(postId, postRegisterDto,files, loginUser);
+    }
 }

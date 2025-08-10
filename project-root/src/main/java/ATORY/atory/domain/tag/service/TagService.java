@@ -30,4 +30,8 @@ public class TagService {
     public Tag save(Tag tag) {
         return tagRepository.save(tag);
     }
+
+    public void delete(Tag tag) {
+        tagRepository.delete(tag);
+    }
 }

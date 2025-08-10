@@ -38,4 +38,18 @@ public class TagDto {
     public static List<TagDto> from(List<Tag> tags) {
         return tags.stream().map(TagDto::from).collect(Collectors.toList());
     }
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof TagDto)) return false;
+
+        TagDto tagDto = (TagDto) o;
+        return name != null && name.equals(tagDto.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return name != null ? name.hashCode() : 0;
+    }
+
 }

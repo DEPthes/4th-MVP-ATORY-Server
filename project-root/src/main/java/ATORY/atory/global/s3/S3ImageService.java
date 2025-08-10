@@ -4,6 +4,7 @@ import ATORY.atory.global.exception.ErrorCode;
 import ATORY.atory.global.exception.MapperException;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
+import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.util.IOUtils;
@@ -16,6 +17,10 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLDecoder;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -88,4 +93,23 @@ public class S3ImageService {
 
         return amazonS3.getUrl(bucketName, s3FileName).toString();
     }
+
+    public void delete(String url) {
+        String key = getKeyFromImageAddress(url);
+        try{
+            amazonS3.deleteObject(new DeleteObjectRequest(bucketName, key));
+        }catch (Exception e){
+            throw new MapperException(ErrorCode.FILE_DELETE_FAILED);
+        }
+    }
+    private String getKeyFromImageAddress(String imageAddress){
+        try{
+            URL url = new URL(imageAddress);
+            String decodingKey = URLDecoder.decode(url.getPath(), "UTF-8");
+            return decodingKey.substring(1);
+        }catch (MalformedURLException | UnsupportedEncodingException e){
+            throw new MapperException(ErrorCode.FILE_DELETE_FAILED);
+        }
+    }
+
 }
