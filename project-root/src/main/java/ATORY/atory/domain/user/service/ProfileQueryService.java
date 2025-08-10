@@ -30,13 +30,14 @@ public class ProfileQueryService {
     private static final String DEFAULT_PROFILE = "https://cdn.atory.app/defaults/profile.png";
     private static final String DEFAULT_BANNER  = "https://cdn.atory.app/defaults/banner.png";
 
+    /** GNB 요약 */
     public MeSummaryDto me(HttpServletRequest req) {
         var optUserId = authUserResolver.resolveUserId(req);
         if (optUserId.isEmpty()) return MeSummaryDto.guest();
 
         Long userId = optUserId.get();
 
-        // ===== DEV Fallback (DB 없이도 동작) =====
+        // DEV 모드 (DB 없이 동작)
         if (devAuthEnabled) {
             return MeSummaryDto.builder()
                     .authenticated(true)
@@ -49,7 +50,7 @@ public class ProfileQueryService {
                     .build();
         }
 
-        // ===== 실제 DB 모드 =====
+        // 실제 DB
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("USER_NOT_FOUND"));
 
@@ -61,47 +62,50 @@ public class ProfileQueryService {
                 .authenticated(true)
                 .userId(user.getId())
                 .role(role)
-                .nickname(user.getUsername())
-                .profileImgUrl(user.getProfileImgUrl() != null ? user.getProfileImgUrl() : DEFAULT_PROFILE)
+                .nickname(nvl(user.getUsername(), "사용자"))
+                .profileImgUrl(nvl(user.getProfileImgUrl(), DEFAULT_PROFILE))
                 .hasArtistProfile(isArtist)
                 .artistId(artistId)
                 .build();
     }
 
+    /** 마이페이지 상세 */
     public MyProfileDto myProfile(HttpServletRequest req) {
         Long userId = authUserResolver.resolveUserId(req)
                 .orElseThrow(() -> new UserNotFoundException("UNAUTHORIZED"));
 
-        // ===== DEV Fallback (DB 없이도 동작) =====
+        // DEV 모드
         if (devAuthEnabled) {
+            String devPhone = "01012345678";
             return MyProfileDto.builder()
                     .userId(userId)
                     .nickname("로컬유저")
                     .emailMasked(maskEmail("local@example.com"))
-                    .phoneMasked(phoneMasker.mask("01012345678"))
+                    .phoneMasked(phoneMasker.mask(devPhone))
                     .profileImgUrl(DEFAULT_PROFILE)
                     .bannerImgUrl(DEFAULT_BANNER)
                     .statusMessage("로컬 상태메시지입니다.")
-                    .contactMasked(phoneMasker.mask("01012345678"))
+                    .contactMasked(phoneMasker.mask(devPhone))
                     .build();
         }
 
-        // ===== 실제 DB 모드 =====
+        // 실제 DB
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("USER_NOT_FOUND"));
 
         return MyProfileDto.builder()
                 .userId(user.getId())
-                .nickname(user.getUsername())
+                .nickname(nvl(user.getUsername(), "사용자"))
                 .emailMasked(maskEmail(user.getEmail()))
                 .phoneMasked(phoneMasker.mask(user.getPhone()))
-                .profileImgUrl(user.getProfileImgUrl() != null ? user.getProfileImgUrl() : DEFAULT_PROFILE)
+                .profileImgUrl(nvl(user.getProfileImgUrl(), DEFAULT_PROFILE))
                 .bannerImgUrl(DEFAULT_BANNER)
-                .statusMessage(user.getIntroduction())
+                .statusMessage(nvl(user.getIntroduction(), ""))
                 .contactMasked(phoneMasker.mask(user.getContact()))
                 .build();
     }
 
+    // ===== 유틸 =====
     private String maskEmail(String email) {
         if (email == null || !email.contains("@")) return email;
         String[] parts = email.split("@", 2);
@@ -109,8 +113,13 @@ public class ProfileQueryService {
     }
 
     private String maskMid(String s) {
-        if (s == null || s.length() <= 2) return s == null ? null : s.charAt(0) + "*";
+        if (s == null || s.isEmpty()) return s;
+        if (s.length() <= 2) return s.charAt(0) + "*";
         int mid = s.length() / 2;
         return s.substring(0, Math.max(1, mid - 1)) + "**" + s.substring(mid + 1);
+    }
+
+    private String nvl(String v, String def) {
+        return (v == null || v.isBlank()) ? def : v;
     }
 }

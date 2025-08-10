@@ -52,3 +52,4 @@ src/main/resources/application-local.yml
 src/main/resources/application-database.yml
 project-root/src/main/resources/application-local.yml
 project-root/src/main/resources/application-database.yml
+.idea/
