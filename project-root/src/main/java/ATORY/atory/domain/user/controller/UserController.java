@@ -2,7 +2,6 @@ package ATORY.atory.domain.user.controller;
 
 import ATORY.atory.domain.user.dto.BannerUpdateResponseDto;
 import ATORY.atory.domain.user.dto.CustomUserDetails;
-import ATORY.atory.domain.user.service.S3ImageService;
 import ATORY.atory.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

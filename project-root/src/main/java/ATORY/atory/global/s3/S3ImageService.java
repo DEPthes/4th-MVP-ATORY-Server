@@ -1,4 +1,4 @@
-package ATORY.atory.domain.user.service;
+package ATORY.atory.global.s3;
 
 import ATORY.atory.global.exception.ErrorCode;
 import ATORY.atory.global.exception.MapperException;

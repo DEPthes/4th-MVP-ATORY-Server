@@ -8,6 +8,7 @@ import ATORY.atory.domain.user.entity.User;
 import ATORY.atory.domain.user.repository.UseRepository;
 import ATORY.atory.global.exception.ErrorCode;
 import ATORY.atory.global.exception.MapperException;
+import ATORY.atory.global.s3.S3ImageService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

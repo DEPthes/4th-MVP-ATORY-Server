@@ -33,6 +33,8 @@ public class Post {
     private String exhibitionURL;
 
     private String description;
+
+    @Enumerated(EnumType.STRING)
     private PostType postType;
 
 
