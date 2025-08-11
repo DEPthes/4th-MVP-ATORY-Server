@@ -1,6 +1,7 @@
 package ATORY.atory.domain.artist.service;
 
 import ATORY.atory.domain.artist.artistNote.dto.ArtistNoteDto;
+import ATORY.atory.domain.artist.artistNote.repository.ArtistNoteRepository;
 import ATORY.atory.domain.artist.artistNote.service.ArtistNoteService;
 import ATORY.atory.domain.artist.dto.ArtistDto;
 import ATORY.atory.domain.artist.dto.ArtistWithArtistNoteDto;
@@ -28,7 +29,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class ArtistService {
     private final ArtistRepository artistRepository;
-    private final ArtistNoteService artistNoteService;
+    private final ArtistNoteRepository artistNoteRepository;
     private final UserService userService;
     private final PostService postService;
 
@@ -78,7 +79,7 @@ public class ArtistService {
         return ArtistWithArtistNoteDto.builder()
                 .id(found.getId())
                 .username(found.getUser().getUsername())
-                .artistNotes(ArtistNoteDto.from(artistNoteService.getByArtistId(id)))
+                .artistNotes(ArtistNoteDto.from(artistNoteRepository.findByArtistId(id)))
                 .login(login)
                 .owner(owner)
                 .build();
@@ -124,4 +125,7 @@ public class ArtistService {
     }
 
 
+    public Artist getArtistByUserId(Long userId) {
+        return artistRepository.findByUserId(userId);
+    }
 }

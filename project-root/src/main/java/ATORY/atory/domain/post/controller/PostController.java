@@ -47,7 +47,7 @@ public class PostController {
     public ResponseEntity<Void> deletePost(
             @PathVariable Long postId,
             @AuthenticationPrincipal CustomUserDetails loginUser
-    ) {
+    ) throws JsonProcessingException {
         postService.deletePost(postId, loginUser);
         return ResponseEntity.noContent().build();
     }
