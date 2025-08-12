@@ -11,7 +11,7 @@ import ATORY.atory.domain.user.dto.SocialLoginRequestDto;
 import ATORY.atory.domain.user.dto.SocialLoginResponseDto;
 import ATORY.atory.domain.user.dto.UserDto;
 import ATORY.atory.domain.user.entity.User;
-import ATORY.atory.domain.user.repository.UseRepository;
+import ATORY.atory.domain.user.repository.UserRepository;
 import ATORY.atory.global.exception.InvalidRoleException;
 import ATORY.atory.global.exception.UserNotFoundException;
 import ATORY.atory.global.security.JwtProvider;
@@ -21,11 +21,12 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+
 @Service
 @RequiredArgsConstructor
 public class UserService {
 
-    private final UseRepository userRepository;
+    private final UserRepository userRepository;
     private final ArtistRepository artistRepository;
     private final CollectorRepository collectorRepository;
     private final JwtProvider jwtProvider;

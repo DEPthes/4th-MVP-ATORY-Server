@@ -17,22 +17,25 @@ public class Post {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     private String name;
 
-    @Column(columnDefinition = "JSON", nullable = true)
+    @Column(columnDefinition = "JSON")
     private String imageURL;
 
-    @Column(columnDefinition = "JSON", nullable = true)
+    @Column(columnDefinition = "JSON")
     private String exhibitionURL;
 
     private String description;
+
+    @Enumerated(EnumType.STRING)
     private PostType postType;
 
     @Builder
-    public Post(Long id, User user, String name, String imageURL, String exhibitionURL, String description, PostType postType) {
+    public Post(Long id, User user, String name, String imageURL,
+                String exhibitionURL, String description, PostType postType) {
         this.id = id;
         this.user = user;
         this.name = name;

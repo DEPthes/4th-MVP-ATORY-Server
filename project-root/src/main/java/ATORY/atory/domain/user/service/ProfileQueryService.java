@@ -3,8 +3,7 @@ package ATORY.atory.domain.user.service;
 import ATORY.atory.domain.artist.repository.ArtistRepository;
 import ATORY.atory.domain.user.dto.MeSummaryDto;
 import ATORY.atory.domain.user.dto.MyProfileDto;
-import ATORY.atory.domain.user.entity.User;
-import ATORY.atory.domain.user.repository.UseRepository;
+import ATORY.atory.domain.user.repository.UserRepository;
 import ATORY.atory.global.exception.UserNotFoundException;
 import ATORY.atory.global.security.AuthUserResolver;
 import ATORY.atory.global.util.PhoneMasker;
@@ -13,13 +12,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ATORY.atory.domain.user.entity.User;
 
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class ProfileQueryService {
 
-    private final UseRepository userRepository;
+    private final UserRepository userRepository;
     private final ArtistRepository artistRepository;
     private final PhoneMasker phoneMasker;
     private final AuthUserResolver authUserResolver;

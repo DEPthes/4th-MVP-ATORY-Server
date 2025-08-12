@@ -8,7 +8,6 @@ import ATORY.atory.domain.post.dto.PostDto;
 import ATORY.atory.domain.post.service.PostService;
 import ATORY.atory.domain.tag.service.TagQueryService;
 import ATORY.atory.domain.user.dto.UserDto;
-import ATORY.atory.domain.user.entity.User;
 import ATORY.atory.domain.user.service.UserService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +15,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ATORY.atory.global.exception.UserNotFoundException;
-
+import ATORY.atory.domain.user.entity.User;
 import java.util.Collections;
 
 @Service

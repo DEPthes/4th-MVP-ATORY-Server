@@ -1,9 +1,9 @@
 package ATORY.atory.domain.follow.entity;
 
-import ATORY.atory.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import ATORY.atory.domain.user.entity.User;
 
 @Entity
 @NoArgsConstructor

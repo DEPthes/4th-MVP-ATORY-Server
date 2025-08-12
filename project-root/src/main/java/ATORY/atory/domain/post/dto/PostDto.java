@@ -1,11 +1,11 @@
 package ATORY.atory.domain.post.dto;
 
 import ATORY.atory.domain.post.entity.PostType;
-import ATORY.atory.domain.user.entity.User;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import ATORY.atory.domain.user.entity.User;
 
 @NoArgsConstructor
 @Getter

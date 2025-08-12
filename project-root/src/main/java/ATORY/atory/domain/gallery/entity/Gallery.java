@@ -1,10 +1,10 @@
 package ATORY.atory.domain.gallery.entity;
 
-import ATORY.atory.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import ATORY.atory.domain.user.entity.User;
 
 @Entity
 @NoArgsConstructor
