@@ -17,14 +17,17 @@ import ATORY.atory.global.exception.UserNotFoundException;
 import ATORY.atory.global.security.JwtProvider;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.json.JSONObject;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -48,12 +51,12 @@ public class UserService {
 
     public GoogleLoginResponseDto googleLogin(String code) {
         String accessToken = getAccessToken(code);
-        JSONObject userInfo = getUserInfo(accessToken);
+        Map<String, Object> userInfo = getUserInfo(accessToken);
 
-        String googleId = userInfo.optString("sub", null);
-        String email    = userInfo.optString("email", null);
-        String name     = userInfo.optString("name", "사용자");
-        String picture  = userInfo.optString("picture", null);
+        String googleId = (String) userInfo.get("sub");
+        String email    = (String) userInfo.get("email");
+        String name     = (String) userInfo.getOrDefault("name", "사용자");
+        String picture  = (String) userInfo.get("picture");
 
         if (googleId == null || email == null) {
             throw new IllegalStateException("Google userinfo 응답에 sub/email이 없습니다.");
@@ -76,12 +79,9 @@ public class UserService {
                     .isProfileCompleted(false)
                     .build();
             user = userRepository.save(user);
-        } else {
-            // 프로필 이미지가 바뀌었으면 업데이트
-            if (picture != null && (user.getProfileImgUrl() == null || !picture.equals(user.getProfileImgUrl()))) {
-                user.updateProfileImgUrl(picture);
-                userRepository.save(user);
-            }
+        } else if (picture != null && (user.getProfileImgUrl() == null || !picture.equals(user.getProfileImgUrl()))) {
+            user.updateProfileImgUrl(picture);
+            userRepository.save(user);
         }
 
         String token = jwtProvider.createToken(user.getId());
@@ -237,11 +237,17 @@ public class UserService {
                 String.class
         );
 
-        JSONObject json = new JSONObject(response.getBody());
-        return json.getString("access_token");
+        try {
+            ObjectMapper om = new ObjectMapper();
+            Map<String, Object> json = om.readValue(response.getBody(),
+                    new TypeReference<Map<String, Object>>() {});
+            return (String) json.get("access_token");
+        } catch (Exception e) {
+            throw new IllegalStateException("구글 토큰 응답 파싱 실패", e);
+        }
     }
 
-    private JSONObject getUserInfo(String accessToken) {
+    private Map<String, Object> getUserInfo(String accessToken) {
         RestTemplate restTemplate = new RestTemplate();
 
         HttpHeaders headers = new HttpHeaders();
@@ -256,6 +262,12 @@ public class UserService {
                 String.class
         );
 
-        return new JSONObject(response.getBody());
+        try {
+            ObjectMapper om = new ObjectMapper();
+            return om.readValue(response.getBody(),
+                    new TypeReference<Map<String, Object>>() {});
+        } catch (Exception e) {
+            throw new IllegalStateException("구글 사용자 정보 응답 파싱 실패", e);
+        }
     }
 }
