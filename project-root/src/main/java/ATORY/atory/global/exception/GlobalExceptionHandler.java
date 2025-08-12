@@ -1,89 +1,59 @@
 package ATORY.atory.global.exception;
 
 import ATORY.atory.global.dto.ApiResult;
-import com.fasterxml.jackson.core.JsonProcessingException;
+import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
-import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.bind.annotation.*;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ApiResult<String> handleBindException(MethodArgumentNotValidException exception) {
-        BindingResult bindingResult = exception.getBindingResult();
-        StringBuilder builder = new StringBuilder();
-
-        for (FieldError fieldError : bindingResult.getFieldErrors()) {
-            builder.append(" [");
-            builder.append(fieldError.getField());
-            builder.append("] -> ");
-            builder.append(fieldError.getDefaultMessage());
-            builder.append(" 입력된 값: [");
-            builder.append(fieldError.getRejectedValue());
-            builder.append("] ");
-        }
-
-        return ApiResult.withError(ErrorCode.INVALID_INPUT_VALUE, builder.toString());
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ApiResult<Void> handleMethodArgumentNotValid(MethodArgumentNotValidException ex) {
+        String msg = ex.getBindingResult().getFieldErrors().stream()
+                .findFirst()
+                .map(fe -> fe.getDefaultMessage())
+                .orElse("잘못된 요청입니다.");
+        return ApiResult.of(HttpStatus.BAD_REQUEST, msg, null);
     }
 
-    @ExceptionHandler(MapperException.class)
-    public ResponseEntity<ApiResult<String>> handleMapperException(MapperException exception) {
-        ErrorCode errorCode = exception.getErrorCode();
-        ApiResult<String> apiResult = ApiResult.withError(errorCode, null);
-        return new ResponseEntity<>(apiResult, errorCode.getHttpStatus());
+    @ExceptionHandler(ConstraintViolationException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ApiResult<Void> handleConstraintViolation(ConstraintViolationException ex) {
+        String msg = ex.getConstraintViolations().stream()
+                .findFirst()
+                .map(v -> v.getMessage())
+                .orElse("잘못된 요청입니다.");
+        return ApiResult.of(HttpStatus.BAD_REQUEST, msg, null);
     }
 
-    // RuntimeException
-    @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<ApiResult<String>> handleRuntimeException(RuntimeException exception) {
-        ApiResult<String> apiResult = ApiResult.withError(ErrorCode.INTERNAL_SERVER_ERROR, exception.getMessage());
-        return new ResponseEntity<>(apiResult, HttpStatus.INTERNAL_SERVER_ERROR);
+    @ExceptionHandler(IllegalStateException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public ApiResult<String> handleIllegalState(IllegalStateException ex) {
+        return ApiResult.of(HttpStatus.UNAUTHORIZED, ex.getMessage(), null);
     }
 
-    // HttpRequestMethodNotSupportedException 처리
-    // 지원되지 않는 HTTP 메서드로 요청이 들어왔을 때 발생하는 예외처리
-    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
-    public ResponseEntity<ApiResult<String>> handleHttpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException exception) {
-        String message = "지원하지 않는 HTTP 메서드입니다: " + exception.getMethod();
-        ApiResult<String> apiResult = ApiResult.withError(ErrorCode.INVALID_INPUT_VALUE, message);
-        return new ResponseEntity<>(apiResult, HttpStatus.METHOD_NOT_ALLOWED);
-    }
-
-    // IllegalArgumentException 처리
-    // 잘못된 인자가 메서드에 전달되었을 때 발생하는 예외처리
-    @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<ApiResult<String>> handleIllegalArgumentException(IllegalArgumentException exception) {
-        ApiResult<String> apiResult = ApiResult.withError(ErrorCode.INVALID_INPUT_VALUE, exception.getMessage());
-        return new ResponseEntity<>(apiResult, HttpStatus.BAD_REQUEST);
-    }
-
-    // JsonProcessingException 처리
-    @ExceptionHandler(JsonProcessingException.class)
-    public ResponseEntity<String> handleJsonProcessingException(JsonProcessingException ex) {
-        // 에러 메시지와 상태 코드 반환
-        return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body("JSON 처리 중 오류가 발생했습니다: " + ex.getMessage());
-    }
-
-    // UserNotFoundException 처리
     @ExceptionHandler(UserNotFoundException.class)
-    public ResponseEntity<ApiResult<String>> handleUserNotFoundException(UserNotFoundException exception) {
-        ApiResult<String> apiResult = ApiResult.withError(ErrorCode.USER_NOT_FOUND, exception.getMessage());
-        return new ResponseEntity<>(apiResult, HttpStatus.NOT_FOUND);
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ApiResult<Void> handleUserNotFound(UserNotFoundException ex) {
+        return ApiResult.of(HttpStatus.NOT_FOUND, ex.getMessage(), null);
     }
 
-    // InvalidRoleException 처리
     @ExceptionHandler(InvalidRoleException.class)
-    public ResponseEntity<ApiResult<String>> handleInvalidRoleException(InvalidRoleException exception) {
-        ApiResult<String> apiResult = ApiResult.withError(ErrorCode.INVALID_INPUT_VALUE, exception.getMessage());
-        return new ResponseEntity<>(apiResult, HttpStatus.BAD_REQUEST);
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ApiResult<Void> handleInvalidRole(InvalidRoleException ex) {
+        return ApiResult.of(HttpStatus.BAD_REQUEST, ex.getMessage(), null);
+    }
+
+    @ExceptionHandler(Exception.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ApiResult<Void> handleUnexpected(Exception ex) {
+        return ApiResult.of(
+                HttpStatus.INTERNAL_SERVER_ERROR,
+                "회원가입에 실패했습니다. 잠시 후 다시 시도해주세요.",
+                null
+        );
     }
 }

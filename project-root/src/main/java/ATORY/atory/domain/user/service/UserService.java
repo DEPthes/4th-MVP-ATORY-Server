@@ -15,11 +15,16 @@ import ATORY.atory.domain.user.repository.UserRepository;
 import ATORY.atory.global.exception.InvalidRoleException;
 import ATORY.atory.global.exception.UserNotFoundException;
 import ATORY.atory.global.security.JwtProvider;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.json.JSONObject;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 
 @Service
 @RequiredArgsConstructor
@@ -128,46 +133,85 @@ public class UserService {
         );
     }
 
-    public ProfileSetupResponseDto setupProfile(ProfileSetupRequestDto requestDto) {
-        User user = userRepository.findById(requestDto.getUserId())
-                .orElseThrow(() ->
-                        new UserNotFoundException("User not found with id: " + requestDto.getUserId()));
+    @Transactional
+    public ProfileSetupResponseDto setupProfile(ProfileSetupRequestDto req) {
+        DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        try {
+            LocalDate.parse(req.getBirthDate(), fmt);
+        } catch (DateTimeParseException ex) {
+            throw new IllegalArgumentException("생년월일 형식이 올바르지 않습니다. (yyyy-MM-dd)");
+        }
 
+        if (req.getBio() != null && req.getBio().length() > 60) {
+            throw new IllegalArgumentException("소개글은 60자 이하여야 합니다.");
+        }
+
+        if (!req.getPhone().matches("^[0-9]+$")) {
+            throw new IllegalArgumentException("연락처는 숫자만 입력 가능합니다. (- 없이)");
+        }
+
+        String role = req.getRole().toUpperCase();
+
+        User user = userRepository.findById(req.getUserId())
+                .orElseThrow(() -> new UserNotFoundException("User not found with id: " + req.getUserId()));
+
+        // 사용자 기본 정보 업데이트
         user.updateProfileInfo(
-                requestDto.getName(),
-                requestDto.getPhone(),
-                requestDto.getEmail(),
-                requestDto.getBirthDate(),
-                requestDto.getBio()
+                req.getName(),
+                req.getPhone(),
+                req.getEmail(),
+                req.getBirthDate(),
+                req.getBio()
         );
-
         user.completeProfile();
         userRepository.save(user);
 
-        if ("ARTIST".equals(requestDto.getRole())) {
-            Artist artist = Artist.builder()
-                    .user(user)
-                    .birth(requestDto.getBirthDate())
-                    .educationBackground(requestDto.getEducation())
-                    .disclosureStatus(requestDto.getIsEducationPublic())
-                    .build();
-            artistRepository.save(artist);
-        } else if ("COLLECTOR".equals(requestDto.getRole())) {
-            Collector collector = Collector.builder()
-                    .user(user)
-                    .birth(requestDto.getBirthDate())
-                    .educationBackground(requestDto.getEducation())
-                    .disclosureStatus(requestDto.getIsEducationPublic())
-                    .build();
-            collectorRepository.save(collector);
-        } else {
-            throw new InvalidRoleException(
-                    "Invalid role: " + requestDto.getRole() + ". Must be 'ARTIST' or 'COLLECTOR'");
+        switch (role) {
+            case "ARTIST" -> {
+                Long artistId = artistRepository.findIdByUserId(user.getId()).orElse(null);
+                if (artistId == null) {
+                    Artist artist = Artist.builder()
+                            .user(user)
+                            .birth(req.getBirthDate())
+                            .educationBackground(req.getEducation())
+                            .disclosureStatus(req.getIsEducationPublic())
+                            .build();
+                    artistRepository.save(artist);
+                } else {
+                    Artist artist = artistRepository.findById(artistId)
+                            .orElseThrow(() -> new IllegalStateException("Artist id를 찾을 수 없습니다."));
+                    artist.update(
+                            req.getBirthDate(),
+                            req.getEducation(),
+                            req.getIsEducationPublic()
+                    );
+                    artistRepository.save(artist);
+                }
+            }
+            case "COLLECTOR" -> {
+                Collector collector = collectorRepository.findByUserId(user.getId()).orElse(null);
+                if (collector == null) {
+                    collector = Collector.builder()
+                            .user(user)
+                            .birth(req.getBirthDate())
+                            .educationBackground(req.getEducation())
+                            .disclosureStatus(req.getIsEducationPublic())
+                            .build();
+                } else {
+                    collector.update(
+                            req.getBirthDate(),
+                            req.getEducation(),
+                            req.getIsEducationPublic()
+                    );
+                }
+                collectorRepository.save(collector);
+            }
+            default -> throw new InvalidRoleException("Invalid role: " + req.getRole() + ". Must be 'ARTIST' or 'COLLECTOR'");
         }
 
         return new ProfileSetupResponseDto(
                 user.getId(),
-                requestDto.getRole(),
+                role,
                 user.getUsername(),
                 "Profile setup completed successfully"
         );

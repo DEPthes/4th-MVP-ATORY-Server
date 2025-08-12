@@ -6,5 +6,5 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class GoogleLoginRequestDto {
-    private String code; 
+    private String code;
 }
