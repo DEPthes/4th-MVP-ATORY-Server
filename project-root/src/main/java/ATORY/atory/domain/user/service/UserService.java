@@ -21,7 +21,6 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -46,27 +45,48 @@ public class UserService {
         String accessToken = getAccessToken(code);
         JSONObject userInfo = getUserInfo(accessToken);
 
-        String googleId = userInfo.getString("sub");
-        String email = userInfo.getString("email");
-        String name = userInfo.getString("name");
+        String googleId = userInfo.optString("sub", null);
+        String email    = userInfo.optString("email", null);
+        String name     = userInfo.optString("name", "사용자");
+        String picture  = userInfo.optString("picture", null);
 
-        User user = userRepository.findByGoogleID(googleId)
-                .orElseGet(() -> {
-                    User newUser = User.builder()
-                            .username(name)
-                            .email(email)
-                            .googleID(googleId)
-                            .isSocial(true)
-                            .provider("google")
-                            .phone(null)
-                            .birthDate(null)
-                            .isProfileCompleted(false)
-                            .build();
-                    return userRepository.save(newUser);
-                });
+        if (googleId == null || email == null) {
+            throw new IllegalStateException("Google userinfo 응답에 sub/email이 없습니다.");
+        }
+
+        boolean isNewUser = false;
+
+        User user = userRepository.findByGoogleID(googleId).orElse(null);
+        if (user == null) {
+            isNewUser = true;
+            user = User.builder()
+                    .username(name)
+                    .email(email)
+                    .googleID(googleId)
+                    .isSocial(true)
+                    .provider("google")
+                    .profileImgUrl(picture)
+                    .phone(null)
+                    .birthDate(null)
+                    .isProfileCompleted(false)
+                    .build();
+            user = userRepository.save(user);
+        } else {
+            // 프로필 이미지가 바뀌었으면 업데이트
+            if (picture != null && (user.getProfileImgUrl() == null || !picture.equals(user.getProfileImgUrl()))) {
+                user.updateProfileImgUrl(picture);
+                userRepository.save(user);
+            }
+        }
 
         String token = jwtProvider.createToken(user.getId());
-        return new GoogleLoginResponseDto(token, user.getEmail(), user.getUsername());
+        return new GoogleLoginResponseDto(
+                token,
+                user.getEmail(),
+                user.getUsername(),
+                user.getProfileImgUrl(),
+                isNewUser
+        );
     }
 
     public SocialLoginResponseDto socialLogin(SocialLoginRequestDto requestDto) {

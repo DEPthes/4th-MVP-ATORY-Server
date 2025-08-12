@@ -44,5 +44,8 @@ tasks.named('test') {
 	useJUnitPlatform()
 }
 dependencies {
-	runtimeOnly 'com.h2database:h2'   // 또는 implementation
+	runtimeOnly 'com.h2database:h2'
+}
+dependencies {
+	implementation 'org.json:json:20231013'
 }
