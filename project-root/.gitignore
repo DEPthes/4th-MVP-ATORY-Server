@@ -38,3 +38,4 @@ out/
 
 ### YML ###
 /src/main/resources/application-database.yml
+/src/main/resources/application-oauth.yml

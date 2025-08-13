@@ -22,8 +22,6 @@ public class User {
     private String introduction;
     private String contact;
 
-
-
     @Column(columnDefinition = "JSON", nullable = true)
     private String profileImageURL;
 

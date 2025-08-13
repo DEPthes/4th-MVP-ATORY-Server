@@ -4,7 +4,7 @@ import ATORY.atory.domain.follow.service.FollowService;
 
 import ATORY.atory.domain.user.dto.UserDto;
 import ATORY.atory.domain.user.entity.User;
-import ATORY.atory.domain.user.repository.UseRepository;
+import ATORY.atory.domain.user.repository.UserRepository;
 import ATORY.atory.global.exception.ErrorCode;
 import ATORY.atory.global.exception.MapperException;
 import jakarta.transaction.Transactional;
@@ -16,11 +16,11 @@ import org.springframework.stereotype.Service;
 @Transactional
 public class UserService {
 
-    private final UseRepository useRepository;
+    private final UserRepository userRepository;
     private final FollowService followService;
 
     public UserDto getById(Long Id){
-        User user = useRepository.findById(Id).orElseThrow(() -> new MapperException(ErrorCode.SER_NOT_FOUND));
+        User user = userRepository.findById(Id).orElseThrow(() -> new MapperException(ErrorCode.SER_NOT_FOUND));
         int follower =  followService.countFollower(user).intValue();
         int following = followService.countFollowing(user).intValue();
 
