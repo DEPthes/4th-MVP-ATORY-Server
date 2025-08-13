@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @NoArgsConstructor
 @Getter
-@Table(name = "ArtistNote")
+@Table(name = "artist_note")
 public class ArtistNote {
 
     @Id
@@ -17,12 +17,17 @@ public class ArtistNote {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "artist_id")
+    @JoinColumn(name = "artist_id", nullable = false)
     private Artist artist;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "artist_note_type", nullable = false, length = 20)
     private ArtistNoteType artistNoteType;
 
+    @Column(name = "note_year")
     private String year;
+
+    @Column(columnDefinition = "TEXT")
     private String description;
 
     @Builder

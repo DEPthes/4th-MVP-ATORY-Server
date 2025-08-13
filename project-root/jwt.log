@@ -1,0 +1,37 @@
+> Task :compileJava UP-TO-DATE
+> Task :processResources UP-TO-DATE
+> Task :classes UP-TO-DATE
+> Task :resolveMainClassName UP-TO-DATE
+
+> Task :bootRun
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+[32m :: Spring Boot :: [39m              [2m (v3.2.2)[0;39m
+
+[2m2025-08-13T14:35:35.383+09:00[0;39m [32m INFO[0;39m [35m13401[0;39m [2m---[0;39m [2m[           main][0;39m [2m[0;39m[36mATORY.atory.MainApplication             [0;39m [2m:[0;39m Starting MainApplication using Java 17.0.15 with PID 13401 (/Users/imdabin/4th-MVP-ATORY-Server/project-root/project-root/build/classes/java/main started by imdabin in /Users/imdabin/4th-MVP-ATORY-Server/project-root/project-root)
+[2m2025-08-13T14:35:35.391+09:00[0;39m [32m INFO[0;39m [35m13401[0;39m [2m---[0;39m [2m[           main][0;39m [2m[0;39m[36mATORY.atory.MainApplication             [0;39m [2m:[0;39m The following 2 profiles are active: "local", "springdoc"
+[2m2025-08-13T14:35:38.764+09:00[0;39m [32m INFO[0;39m [35m13401[0;39m [2m---[0;39m [2m[           main][0;39m [2m[0;39m[36m.s.d.r.c.RepositoryConfigurationDelegate[0;39m [2m:[0;39m Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+[2m2025-08-13T14:35:39.242+09:00[0;39m [32m INFO[0;39m [35m13401[0;39m [2m---[0;39m [2m[           main][0;39m [2m[0;39m[36m.s.d.r.c.RepositoryConfigurationDelegate[0;39m [2m:[0;39m Finished Spring Data repository scanning in 466 ms. Found 12 JPA repository interfaces.
+[2m2025-08-13T14:35:40.271+09:00[0;39m [32m INFO[0;39m [35m13401[0;39m [2m---[0;39m [2m[           main][0;39m [2m[0;39m[36mo.s.b.w.embedded.tomcat.TomcatWebServer [0;39m [2m:[0;39m Tomcat initialized with port 8080 (http)
+[2m2025-08-13T14:35:40.290+09:00[0;39m [32m INFO[0;39m [35m13401[0;39m [2m---[0;39m [2m[           main][0;39m [2m[0;39m[36mo.apache.catalina.core.StandardService  [0;39m [2m:[0;39m Starting service [Tomcat]
+[2m2025-08-13T14:35:40.290+09:00[0;39m [32m INFO[0;39m [35m13401[0;39m [2m---[0;39m [2m[           main][0;39m [2m[0;39m[36mo.apache.catalina.core.StandardEngine   [0;39m [2m:[0;39m Starting Servlet engine: [Apache Tomcat/10.1.18]
+[2m2025-08-13T14:35:40.390+09:00[0;39m [32m INFO[0;39m [35m13401[0;39m [2m---[0;39m [2m[           main][0;39m [2m[0;39m[36mo.a.c.c.C.[Tomcat].[localhost].[/]      [0;39m [2m:[0;39m Initializing Spring embedded WebApplicationContext
+[2m2025-08-13T14:35:40.393+09:00[0;39m [32m INFO[0;39m [35m13401[0;39m [2m---[0;39m [2m[           main][0;39m [2m[0;39m[36mw.s.c.ServletWebServerApplicationContext[0;39m [2m:[0;39m Root WebApplicationContext: initialization completed in 4691 ms
+[2m2025-08-13T14:35:40.442+09:00[0;39m [32m INFO[0;39m [35m13401[0;39m [2m---[0;39m [2m[           main][0;39m [2m[0;39m[36mcom.zaxxer.hikari.HikariDataSource      [0;39m [2m:[0;39m HikariPool-1 - Starting...
+[2m2025-08-13T14:35:41.131+09:00[0;39m [32m INFO[0;39m [35m13401[0;39m [2m---[0;39m [2m[           main][0;39m [2m[0;39m[36mcom.zaxxer.hikari.pool.HikariPool       [0;39m [2m:[0;39m HikariPool-1 - Added connection conn0: url=jdbc:h2:mem:atorydb user=SA
+[2m2025-08-13T14:35:41.142+09:00[0;39m [32m INFO[0;39m [35m13401[0;39m [2m---[0;39m [2m[           main][0;39m [2m[0;39m[36mcom.zaxxer.hikari.HikariDataSource      [0;39m [2m:[0;39m HikariPool-1 - Start completed.
+[2m2025-08-13T14:35:41.226+09:00[0;39m [32m INFO[0;39m [35m13401[0;39m [2m---[0;39m [2m[           main][0;39m [2m[0;39m[36mo.s.b.a.h2.H2ConsoleAutoConfiguration   [0;39m [2m:[0;39m H2 console available at '/h2-console'. Database available at 'jdbc:h2:mem:atorydb'
+[2m2025-08-13T14:35:41.785+09:00[0;39m [32m INFO[0;39m [35m13401[0;39m [2m---[0;39m [2m[           main][0;39m [2m[0;39m[36mo.hibernate.jpa.internal.util.LogHelper [0;39m [2m:[0;39m HHH000204: Processing PersistenceUnitInfo [name: default]
+[2m2025-08-13T14:35:41.883+09:00[0;39m [32m INFO[0;39m [35m13401[0;39m [2m---[0;39m [2m[           main][0;39m [2m[0;39m[36morg.hibernate.Version                   [0;39m [2m:[0;39m HHH000412: Hibernate ORM core version 6.4.1.Final
+[2m2025-08-13T14:35:42.011+09:00[0;39m [32m INFO[0;39m [35m13401[0;39m [2m---[0;39m [2m[           main][0;39m [2m[0;39m[36mo.h.c.internal.RegionFactoryInitiator   [0;39m [2m:[0;39m HHH000026: Second-level cache disabled
+[2m2025-08-13T14:35:42.273+09:00[0;39m [32m INFO[0;39m [35m13401[0;39m [2m---[0;39m [2m[           main][0;39m [2m[0;39m[36mo.s.o.j.p.SpringPersistenceUnitInfo     [0;39m [2m:[0;39m No LoadTimeWeaver setup: ignoring JPA class transformer
+[2m2025-08-13T14:35:43.619+09:00[0;39m [32m INFO[0;39m [35m13401[0;39m [2m---[0;39m [2m[           main][0;39m [2m[0;39m[36mo.h.e.t.j.p.i.JtaPlatformInitiator      [0;39m [2m:[0;39m HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+[2m2025-08-13T14:35:43.741+09:00[0;39m [32m INFO[0;39m [35m13401[0;39m [2m---[0;39m [2m[           main][0;39m [2m[0;39m[36mj.LocalContainerEntityManagerFactoryBean[0;39m [2m:[0;39m Initialized JPA EntityManagerFactory for persistence unit 'default'
+[2m2025-08-13T14:35:44.131+09:00[0;39m [32m INFO[0;39m [35m13401[0;39m [2m---[0;39m [2m[           main][0;39m [2m[0;39m[36mo.s.d.j.r.query.QueryEnhancerFactory    [0;39m [2m:[0;39m Hibernate is in classpath; If applicable, HQL parser will be used.
+[2m2025-08-13T14:35:46.401+09:00[0;39m [32m INFO[0;39m [35m13401[0;39m [2m---[0;39m [2m[           main][0;39m [2m[0;39m[36mo.s.b.w.embedded.tomcat.TomcatWebServer [0;39m [2m:[0;39m Tomcat started on port 8080 (http) with context path ''
+[2m2025-08-13T14:35:46.431+09:00[0;39m [32m INFO[0;39m [35m13401[0;39m [2m---[0;39m [2m[           main][0;39m [2m[0;39m[36mATORY.atory.MainApplication             [0;39m [2m:[0;39m Started MainApplication in 12.995 seconds (process running for 13.941)

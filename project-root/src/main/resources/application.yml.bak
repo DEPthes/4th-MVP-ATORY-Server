@@ -9,7 +9,7 @@ logging:
 
 spring:
   profiles:
-    active: ["local", "springdoc"]
+    active: ["database", "springdoc"]
   output:
     ansi:
       enabled: always

@@ -6,7 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
-@RestControllerAdvice
+@RestControllerAdvice(basePackages = "ATORY.atory")
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -47,12 +47,19 @@ public class GlobalExceptionHandler {
         return ApiResult.of(HttpStatus.BAD_REQUEST, ex.getMessage(), null);
     }
 
+    @ExceptionHandler(SignUpException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ApiResult<Void> handleSignUp(SignUpException ex) {
+        return ApiResult.of(HttpStatus.BAD_REQUEST,
+                "회원가입에 실패했습니다. 잠시 후 다시 시도해주세요.", null);
+    }
+
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ApiResult<Void> handleUnexpected(Exception ex) {
         return ApiResult.of(
                 HttpStatus.INTERNAL_SERVER_ERROR,
-                "회원가입에 실패했습니다. 잠시 후 다시 시도해주세요.",
+                "서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.",
                 null
         );
     }
