@@ -9,7 +9,7 @@ logging:
 
 spring:
   profiles:
-    active: ["database", "springdoc"]
+    active: ["database", "springdoc", "oauth"]
   output:
     ansi:
       enabled: always
