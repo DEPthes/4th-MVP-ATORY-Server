@@ -38,3 +38,18 @@ out/
 
 ### YML ###
 /src/main/resources/application-database.yml
+# Local app configs (do not commit)
+/src/main/resources/application-local.yml
+/src/main/resources/database.yml
+/src/main/resources/application-*.local.yml
+.env
+*.keystore
+src/main/resources/application-local.yml
+src/main/resources/database.yml
+src/main/resources/application-local.yml
+src/main/resources/application-database.yml
+src/main/resources/application-local.yml
+src/main/resources/application-database.yml
+project-root/src/main/resources/application-local.yml
+project-root/src/main/resources/application-database.yml
+.idea/
