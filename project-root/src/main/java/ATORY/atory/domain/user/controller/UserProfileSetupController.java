@@ -6,6 +6,7 @@ import ATORY.atory.domain.user.service.UserService;
 import ATORY.atory.global.dto.ApiResult;
 import ATORY.atory.global.security.JwtProvider;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,16 +21,19 @@ public class UserProfileSetupController {
     @PostMapping("/profile/setup")
     public ApiResult<ProfileSetupResponseDto> setupProfile(
             HttpServletRequest request,
-            @RequestBody ProfileSetupRequestDto dto
+            @Valid @RequestBody ProfileSetupRequestDto dto
     ) {
+        // Authorization: Bearer <token>
         String auth = request.getHeader("Authorization");
         if (auth == null || !auth.startsWith("Bearer ")) {
             throw new IllegalStateException("Authorization Bearer 토큰이 필요합니다.");
         }
+
         String token = auth.substring(7).trim();
         if (!jwtProvider.validateToken(token)) {
             throw new IllegalStateException("JWT 토큰이 유효하지 않습니다.");
         }
+
         Long tokenUserId = Long.parseLong(jwtProvider.getUserIdFromToken(token));
         if (!tokenUserId.equals(dto.getUserId())) {
             throw new IllegalStateException("요청 userId와 토큰의 userId가 일치하지 않습니다.");

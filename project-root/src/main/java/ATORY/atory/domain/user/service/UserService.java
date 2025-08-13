@@ -15,11 +15,19 @@ import ATORY.atory.domain.user.repository.UserRepository;
 import ATORY.atory.global.exception.InvalidRoleException;
 import ATORY.atory.global.exception.UserNotFoundException;
 import ATORY.atory.global.security.JwtProvider;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.json.JSONObject;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -43,12 +51,12 @@ public class UserService {
 
     public GoogleLoginResponseDto googleLogin(String code) {
         String accessToken = getAccessToken(code);
-        JSONObject userInfo = getUserInfo(accessToken);
+        Map<String, Object> userInfo = getUserInfo(accessToken);
 
-        String googleId = userInfo.optString("sub", null);
-        String email    = userInfo.optString("email", null);
-        String name     = userInfo.optString("name", "사용자");
-        String picture  = userInfo.optString("picture", null);
+        String googleId = (String) userInfo.get("sub");
+        String email    = (String) userInfo.get("email");
+        String name     = (String) userInfo.getOrDefault("name", "사용자");
+        String picture  = (String) userInfo.get("picture");
 
         if (googleId == null || email == null) {
             throw new IllegalStateException("Google userinfo 응답에 sub/email이 없습니다.");
@@ -71,12 +79,9 @@ public class UserService {
                     .isProfileCompleted(false)
                     .build();
             user = userRepository.save(user);
-        } else {
-            // 프로필 이미지가 바뀌었으면 업데이트
-            if (picture != null && (user.getProfileImgUrl() == null || !picture.equals(user.getProfileImgUrl()))) {
-                user.updateProfileImgUrl(picture);
-                userRepository.save(user);
-            }
+        } else if (picture != null && (user.getProfileImgUrl() == null || !picture.equals(user.getProfileImgUrl()))) {
+            user.updateProfileImgUrl(picture);
+            userRepository.save(user);
         }
 
         String token = jwtProvider.createToken(user.getId());
@@ -128,46 +133,85 @@ public class UserService {
         );
     }
 
-    public ProfileSetupResponseDto setupProfile(ProfileSetupRequestDto requestDto) {
-        User user = userRepository.findById(requestDto.getUserId())
-                .orElseThrow(() ->
-                        new UserNotFoundException("User not found with id: " + requestDto.getUserId()));
+    @Transactional
+    public ProfileSetupResponseDto setupProfile(ProfileSetupRequestDto req) {
+        DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        try {
+            LocalDate.parse(req.getBirthDate(), fmt);
+        } catch (DateTimeParseException ex) {
+            throw new IllegalArgumentException("생년월일 형식이 올바르지 않습니다. (yyyy-MM-dd)");
+        }
 
+        if (req.getBio() != null && req.getBio().length() > 60) {
+            throw new IllegalArgumentException("소개글은 60자 이하여야 합니다.");
+        }
+
+        if (!req.getPhone().matches("^[0-9]+$")) {
+            throw new IllegalArgumentException("연락처는 숫자만 입력 가능합니다. (- 없이)");
+        }
+
+        String role = req.getRole().toUpperCase();
+
+        User user = userRepository.findById(req.getUserId())
+                .orElseThrow(() -> new UserNotFoundException("User not found with id: " + req.getUserId()));
+
+        // 사용자 기본 정보 업데이트
         user.updateProfileInfo(
-                requestDto.getName(),
-                requestDto.getPhone(),
-                requestDto.getEmail(),
-                requestDto.getBirthDate(),
-                requestDto.getBio()
+                req.getName(),
+                req.getPhone(),
+                req.getEmail(),
+                req.getBirthDate(),
+                req.getBio()
         );
-
         user.completeProfile();
         userRepository.save(user);
 
-        if ("ARTIST".equals(requestDto.getRole())) {
-            Artist artist = Artist.builder()
-                    .user(user)
-                    .birth(requestDto.getBirthDate())
-                    .educationBackground(requestDto.getEducation())
-                    .disclosureStatus(requestDto.getIsEducationPublic())
-                    .build();
-            artistRepository.save(artist);
-        } else if ("COLLECTOR".equals(requestDto.getRole())) {
-            Collector collector = Collector.builder()
-                    .user(user)
-                    .birth(requestDto.getBirthDate())
-                    .educationBackground(requestDto.getEducation())
-                    .disclosureStatus(requestDto.getIsEducationPublic())
-                    .build();
-            collectorRepository.save(collector);
-        } else {
-            throw new InvalidRoleException(
-                    "Invalid role: " + requestDto.getRole() + ". Must be 'ARTIST' or 'COLLECTOR'");
+        switch (role) {
+            case "ARTIST" -> {
+                Long artistId = artistRepository.findIdByUserId(user.getId()).orElse(null);
+                if (artistId == null) {
+                    Artist artist = Artist.builder()
+                            .user(user)
+                            .birth(req.getBirthDate())
+                            .educationBackground(req.getEducation())
+                            .disclosureStatus(req.getIsEducationPublic())
+                            .build();
+                    artistRepository.save(artist);
+                } else {
+                    Artist artist = artistRepository.findById(artistId)
+                            .orElseThrow(() -> new IllegalStateException("Artist id를 찾을 수 없습니다."));
+                    artist.update(
+                            req.getBirthDate(),
+                            req.getEducation(),
+                            req.getIsEducationPublic()
+                    );
+                    artistRepository.save(artist);
+                }
+            }
+            case "COLLECTOR" -> {
+                Collector collector = collectorRepository.findByUserId(user.getId()).orElse(null);
+                if (collector == null) {
+                    collector = Collector.builder()
+                            .user(user)
+                            .birth(req.getBirthDate())
+                            .educationBackground(req.getEducation())
+                            .disclosureStatus(req.getIsEducationPublic())
+                            .build();
+                } else {
+                    collector.update(
+                            req.getBirthDate(),
+                            req.getEducation(),
+                            req.getIsEducationPublic()
+                    );
+                }
+                collectorRepository.save(collector);
+            }
+            default -> throw new InvalidRoleException("Invalid role: " + req.getRole() + ". Must be 'ARTIST' or 'COLLECTOR'");
         }
 
         return new ProfileSetupResponseDto(
                 user.getId(),
-                requestDto.getRole(),
+                role,
                 user.getUsername(),
                 "Profile setup completed successfully"
         );
@@ -193,11 +237,17 @@ public class UserService {
                 String.class
         );
 
-        JSONObject json = new JSONObject(response.getBody());
-        return json.getString("access_token");
+        try {
+            ObjectMapper om = new ObjectMapper();
+            Map<String, Object> json = om.readValue(response.getBody(),
+                    new TypeReference<Map<String, Object>>() {});
+            return (String) json.get("access_token");
+        } catch (Exception e) {
+            throw new IllegalStateException("구글 토큰 응답 파싱 실패", e);
+        }
     }
 
-    private JSONObject getUserInfo(String accessToken) {
+    private Map<String, Object> getUserInfo(String accessToken) {
         RestTemplate restTemplate = new RestTemplate();
 
         HttpHeaders headers = new HttpHeaders();
@@ -212,6 +262,12 @@ public class UserService {
                 String.class
         );
 
-        return new JSONObject(response.getBody());
+        try {
+            ObjectMapper om = new ObjectMapper();
+            return om.readValue(response.getBody(),
+                    new TypeReference<Map<String, Object>>() {});
+        } catch (Exception e) {
+            throw new IllegalStateException("구글 사용자 정보 응답 파싱 실패", e);
+        }
     }
 }

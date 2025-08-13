@@ -22,13 +22,18 @@ public class Collector {
 
     private String birth;
     private String educationBackground;
-
     private Boolean disclosureStatus = Boolean.TRUE;
 
     @Builder
     public Collector(Long id, User user, String birth, String educationBackground, Boolean disclosureStatus) {
         this.id = id;
         this.user = user;
+        this.birth = birth;
+        this.educationBackground = educationBackground;
+        this.disclosureStatus = disclosureStatus;
+    }
+
+    public void update(String birth, String educationBackground, Boolean disclosureStatus) {
         this.birth = birth;
         this.educationBackground = educationBackground;
         this.disclosureStatus = disclosureStatus;
