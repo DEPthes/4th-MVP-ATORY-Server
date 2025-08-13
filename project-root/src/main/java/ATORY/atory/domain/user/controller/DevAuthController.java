@@ -20,19 +20,17 @@ public class DevAuthController {
     @PostMapping("/login")
     public TokenResponse login(@RequestBody LoginRequest req) {
         if (!devAuthEnabled) {
-            // 로컬 프로파일이 아니면 금지
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "DEV_AUTH_DISABLED");
         }
         if (req.email() == null || req.email().isBlank()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "EMAIL_REQUIRED");
         }
 
-        long fakeUserId = 999L; // DB 없이 임시 유저
+        long fakeUserId = 999L;
         String token = jwtProvider.createToken(fakeUserId);
         return new TokenResponse(token);
     }
 
-    // ===== DTOs (record 사용 시 접근자는 email(), password()) =====
     public record LoginRequest(String email, String password) {}
     public record TokenResponse(String token) {}
 }

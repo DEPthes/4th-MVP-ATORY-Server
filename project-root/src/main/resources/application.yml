@@ -1,31 +1,20 @@
-# logging 설정
-logging:
-  level:
-    org:
-      hibernate:
-        type:
-          descriptor:
-            sql: debug
-
 spring:
-  profiles:
-    active: ["database", "springdoc"]
-  output:
-    ansi:
-      enabled: always
-  mvc:
-    pathmatch:
-      matching-strategy: ant_path_matcher
+  datasource:
+    url: jdbc:h2:mem:testdb;MODE=MySQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
   jpa:
+    hibernate:
+      ddl-auto: update
     properties:
       hibernate:
-        jdbc:
-          time_zone: 'Asia/Seoul'
+        dialect: org.hibernate.dialect.H2Dialect
+        format_sql: true
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
 
-# 오류 처리
 server:
-  error:
-    include-exception: true
-    include-stacktrace: always
-  #port 설정
   port: 8080
