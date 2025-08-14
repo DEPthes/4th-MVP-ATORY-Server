@@ -23,7 +23,7 @@ public class AuthService {
     private final UserRepository userRepository;
 
     private final ClientRegistrationRepository clientRegistrationRepository;
-    private final WebClient webClient = WebClient.create();
+    private final WebClient webClient;
 
     public String exchangeAuthCodeForGoogleSub (String code){
         //Google Client 정보 가져오기
