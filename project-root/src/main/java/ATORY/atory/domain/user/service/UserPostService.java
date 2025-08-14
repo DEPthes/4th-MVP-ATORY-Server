@@ -9,7 +9,6 @@ import ATORY.atory.domain.user.dto.CustomUserDetails;
 import ATORY.atory.domain.user.dto.UserDto;
 import ATORY.atory.domain.user.dto.UserWithPostDto;
 import ATORY.atory.domain.user.entity.User;
-import ATORY.atory.domain.user.repository.UseRepository;
 import ATORY.atory.global.exception.ErrorCode;
 import ATORY.atory.global.exception.MapperException;
 import jakarta.transaction.Transactional;

@@ -6,7 +6,7 @@ import ATORY.atory.domain.follow.service.FollowService;
 import ATORY.atory.domain.gallery.repository.GalleryRepository;
 import ATORY.atory.domain.user.dto.*;
 import ATORY.atory.domain.user.entity.User;
-import ATORY.atory.domain.user.repository.UseRepository;
+import ATORY.atory.domain.user.repository.UserRepository;
 import ATORY.atory.global.dto.UserType;
 import ATORY.atory.global.exception.ErrorCode;
 import ATORY.atory.global.exception.MapperException;
@@ -20,14 +20,31 @@ import java.util.List;
 @RequiredArgsConstructor
 @Transactional
 public class UserService {
+
+    private final UserRepository userRepository;
     private final FollowService followService;
-    private final UseRepository useRepository;
     private final ArtistRepository artistRepository;
     private final CollectorRepository collectorRepository;
     private final GalleryRepository galleryRepository;
 
+    public UserDto getById(Long Id){
+        User user = userRepository.findById(Id).orElseThrow(() -> new MapperException(ErrorCode.SER_NOT_FOUND));
+        int follower =  followService.countFollower(user).intValue();
+        int following = followService.countFollowing(user).intValue();
+
+        return UserDto.builder()
+                .id(user.getId())
+                .username(user.getUsername())
+                .email(user.getEmail())
+                .introduction(user.getIntroduction())
+                .contact(user.getContact())
+                .follower(follower)
+                .following(following)
+                .build();
+    }
+
     public User getUserEntityById(Long Id){
-        return useRepository.findById(Id).orElseThrow(() -> new MapperException(ErrorCode.SER_NOT_FOUND));
+        return userRepository.findById(Id).orElseThrow(() -> new MapperException(ErrorCode.SER_NOT_FOUND));
     }
     private boolean isLogin(CustomUserDetails loginUser) {
         return loginUser != null;
