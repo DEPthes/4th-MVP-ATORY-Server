@@ -26,8 +26,7 @@ public class Collector {
     private Boolean disclosureStatus = Boolean.TRUE;
 
     @Builder
-    public Collector(Long id, User user, String birth, String educationBackground, Boolean disclosureStatus) {
-        this.id = id;
+    public Collector(User user, String birth, String educationBackground, Boolean disclosureStatus) {
         this.user = user;
         this.birth = birth;
         this.educationBackground = educationBackground;
