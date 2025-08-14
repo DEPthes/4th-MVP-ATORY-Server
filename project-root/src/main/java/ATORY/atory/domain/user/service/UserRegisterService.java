@@ -6,10 +6,11 @@ import ATORY.atory.domain.artist.repository.ArtistRepository;
 import ATORY.atory.domain.collector.dto.CollectorRegisterDto;
 import ATORY.atory.domain.collector.entity.Collector;
 import ATORY.atory.domain.collector.repository.CollectorRepository;
+import ATORY.atory.domain.gallery.dto.GalleryRegisterDto;
+import ATORY.atory.domain.gallery.entity.Gallery;
+import ATORY.atory.domain.gallery.repository.GalleryRepository;
 import ATORY.atory.domain.user.entity.User;
 import ATORY.atory.domain.user.repository.UserRepository;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
@@ -18,7 +19,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.net.URI;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -29,6 +29,7 @@ public class UserRegisterService {
     private final UserRepository userRepository;
     private final ArtistRepository artistRepository;
     private final CollectorRepository collectorRepository;
+    private final GalleryRepository galleryRepository;
 
     private final String SERVICE_KEY = "3IFoWsEA2I43PEmk5vmEq8OBQwwiRVas%2BXgeQdOorDmhB2nFtDy3RjypQapBSUUx9Q%2BoZygaL%2FihO051Jd%2FGCQ%3D%3D";
     private final WebClient webClient;
@@ -79,7 +80,31 @@ public class UserRegisterService {
                 .build());
 
             return true;
-        }
+    }
+
+    //갤러리 회원 가입
+    @Transactional
+    public Boolean galleryRegister(GalleryRegisterDto galleryRegisterDto){
+
+        User savedUser = userRepository.save(User.builder()
+                .username(galleryRegisterDto.getUserName())
+                .email(galleryRegisterDto.getEmail())
+                .contact(galleryRegisterDto.getContact())
+                .introduction(galleryRegisterDto.getIntroduction())
+                .googleID(galleryRegisterDto.getGoogleID())
+                .coverImageURL(null)
+                .profileImageURL(null)
+                .build());
+
+        galleryRepository.save(Gallery.builder()
+                .user(savedUser)
+                .name(galleryRegisterDto.getGalleryName())
+                .location(galleryRegisterDto.getLocation())
+                .registrationNumber(galleryRegisterDto.getRegistrationNumber())
+                .build());
+
+        return true;
+    }
 
     //사업자 등록번호로 사업자 조회
     public Boolean checkBusinessStatus(String businessNumber) {

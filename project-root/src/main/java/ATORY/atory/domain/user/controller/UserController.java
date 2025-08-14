@@ -2,6 +2,7 @@ package ATORY.atory.domain.user.controller;
 
 import ATORY.atory.domain.artist.dto.ArtistRegisterDto;
 import ATORY.atory.domain.collector.dto.CollectorRegisterDto;
+import ATORY.atory.domain.gallery.dto.GalleryRegisterDto;
 import ATORY.atory.domain.user.service.UserRegisterService;
 import ATORY.atory.global.dto.ApiResult;
 import io.swagger.v3.oas.annotations.Operation;
@@ -46,5 +47,16 @@ public class UserController {
         return ApiResult.ok(result);
     }
 
+    @Operation(summary = "갤러리 회원가입", description = "갤러리 회원가입 api")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "성공적으로 확인됨"),
+            @ApiResponse(responseCode = "400", description = "잘못된 입력 값"),
+            @ApiResponse(responseCode = "500", description = "서버 오류 발생")
+    })
+    @PostMapping("/register/gallery")
+    public ApiResult<?> registerGallery(@RequestBody GalleryRegisterDto galleryRegisterDto) {
+        Boolean result = userRegisterService.galleryRegister(galleryRegisterDto);
 
+        return ApiResult.ok(result);
+    }
 }
