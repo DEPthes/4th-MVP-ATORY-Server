@@ -2,6 +2,7 @@ package ATORY.atory.domain.post.entity;
 
 import jakarta.persistence.*;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.stereotype.Service;
@@ -10,6 +11,7 @@ import java.time.LocalDateTime;
 @Entity
 @NoArgsConstructor
 @Setter
+@Getter
 @Service
 @Table(name = "PostDate")
 public class PostDate {
@@ -21,7 +23,7 @@ public class PostDate {
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id")
     private Post post;
 

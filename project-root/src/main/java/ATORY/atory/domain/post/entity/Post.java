@@ -1,10 +1,14 @@
 package ATORY.atory.domain.post.entity;
 
+import ATORY.atory.domain.tag.entity.TagPost;
 import ATORY.atory.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @NoArgsConstructor
@@ -30,6 +34,7 @@ public class Post {
 
     private String description;
     private PostType postType;
+
 
     @Builder
     public Post(Long id, User user, String name, String imageURL, String exhibitionURL, String description, PostType postType) {

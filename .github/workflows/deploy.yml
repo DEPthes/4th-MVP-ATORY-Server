@@ -43,9 +43,13 @@ jobs:
       run: mkdir -p src/main/resources
       
     # (4) YML 파일 생성
-    - name: Set YML
+    - name: Set DATABASE YML
       run: |
           echo "${{ secrets.APPLICATION_DATABASE_YML }}" | base64 --decode > src/main/resources/application-database.yml
+    
+    - name: Set OAUTH YML
+      run: |
+          echo "${{ secrets.APPLICATION_OAUTH_YML }}" | base64 --decode > src/main/resources/application-oauth.yml
   
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
