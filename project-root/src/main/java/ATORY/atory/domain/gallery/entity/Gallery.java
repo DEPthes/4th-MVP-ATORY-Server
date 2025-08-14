@@ -22,10 +22,10 @@ public class Gallery {
 
     private String name;
     private String location;
-    private Integer registrationNumber;
+    private String registrationNumber;
 
     @Builder
-    public Gallery(Long id, User user, String name, String location, Integer registrationNumber) {
+    public Gallery(Long id, User user, String name, String location, String registrationNumber) {
         this.id = id;
         this.user = user;
         this.name = name;

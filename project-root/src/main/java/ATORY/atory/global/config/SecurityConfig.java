@@ -24,8 +24,8 @@ public class SecurityConfig {
                                 "/webjars/**"
                         ).permitAll()
 
-                        // 로그인 엔드포인트 허용
-                        .requestMatchers("/api/auth/**", "/api/user/register/**").permitAll()
+                        // api 허용
+                        .requestMatchers("/api/**").permitAll()
 
                         // 그 외 요청은 인증 필요
                         .anyRequest().authenticated()
