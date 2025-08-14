@@ -6,6 +6,8 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @RequiredArgsConstructor
 @Service
 @Transactional
@@ -22,4 +24,13 @@ public class FollowService {
         return followRepository.countFollowing(user);
     }
 
+    //user를 팔로우 하고있는 사람들의 닉네임
+    public List<String> findFollowers(User user) {
+        return followRepository.findFollowerNicknames(user);
+    }
+    
+    //user가 팔로우 하고있는 사람들의 닉네임
+    public List<String> findFollowing(User user) {
+        return followRepository.findFollowingNicknames(user);
+    }
 }

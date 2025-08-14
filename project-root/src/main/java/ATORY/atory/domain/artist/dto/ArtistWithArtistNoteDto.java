@@ -1,7 +1,6 @@
 package ATORY.atory.domain.artist.dto;
 
 import ATORY.atory.domain.artist.artistNote.dto.ArtistNoteDto;
-import ATORY.atory.domain.user.dto.UserDto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;

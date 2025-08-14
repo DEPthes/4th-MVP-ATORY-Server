@@ -33,6 +33,9 @@ public class Post {
     private String exhibitionURL;
 
     private String description;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "post_type")
     private PostType postType;
 
 

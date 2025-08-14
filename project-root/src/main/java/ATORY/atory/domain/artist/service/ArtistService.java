@@ -2,22 +2,15 @@ package ATORY.atory.domain.artist.service;
 
 import ATORY.atory.domain.artist.artistNote.dto.ArtistNoteDto;
 import ATORY.atory.domain.artist.artistNote.service.ArtistNoteService;
-import ATORY.atory.domain.artist.dto.ArtistDto;
 import ATORY.atory.domain.artist.dto.ArtistWithArtistNoteDto;
-import ATORY.atory.domain.user.dto.UserWithPostDto;
 import ATORY.atory.domain.artist.entity.Artist;
 import ATORY.atory.domain.artist.repository.ArtistRepository;
-import ATORY.atory.domain.post.dto.PostDto;
-import ATORY.atory.domain.post.entity.PostType;
-import ATORY.atory.domain.post.service.PostService;
 import ATORY.atory.domain.user.entity.User;
 import ATORY.atory.domain.user.service.UserService;
 import ATORY.atory.global.exception.ErrorCode;
 import ATORY.atory.global.exception.MapperException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 
 
@@ -28,7 +21,6 @@ public class ArtistService {
     private final ArtistRepository artistRepository;
     private final ArtistNoteService artistNoteService;
     private final UserService userService;
-    private final PostService postService;
 
     private boolean isLogin(User loginUser) {
         return loginUser != null;
@@ -46,23 +38,6 @@ public class ArtistService {
     public Artist getArtistById(Long id) {
         return  artistRepository.findById(id)
                 .orElseThrow(() -> new MapperException(ErrorCode.SER_NOT_FOUND));
-
-    }
-
-    public ArtistDto getArtistDtoById(Long id, User loginUser) {
-        Artist found = getArtistById(id);
-        boolean login = isLogin(loginUser);
-        boolean owner = isOwner(found,loginUser,login);
-
-        return ArtistDto.builder()
-                .id(id)
-                .user(userService.getById(found.getUser().getId()))
-                .birth(found.getBirth())
-                .educationBackground(found.getEducationBackground())
-                .disclosureStatus(found.getDisclosureStatus())
-                .owner(owner)
-                .login(login)
-                .build();
 
     }
 

@@ -49,7 +49,7 @@ public class UserWithPostDto {
         this.login = login;
     }
 
-    public static UserWithPostDto from(UserDto user,
+    public static UserWithPostDto from(User user,
                                        Slice<PostDto> posts, boolean owner, boolean login) {
         return UserWithPostDto.builder()
                 .id(user.getId())
