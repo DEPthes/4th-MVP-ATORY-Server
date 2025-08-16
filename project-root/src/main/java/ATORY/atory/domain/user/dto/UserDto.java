@@ -44,5 +44,4 @@ public class UserDto {
         this.follower = follower;
         this.following = following;
     }
-
 }
