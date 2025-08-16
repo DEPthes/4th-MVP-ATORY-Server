@@ -1,5 +1,6 @@
 package ATORY.atory.domain.user.entity;
 
+import ATORY.atory.global.dto.UserType;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -27,6 +28,8 @@ public class User {
     private String introduction;
     private String contact;
 
+    private UserType userType;
+
     @Column(columnDefinition = "JSON", nullable = true)
     private String profileImageURL;
 
@@ -35,7 +38,7 @@ public class User {
 
 
     @Builder
-    public User(String username, String googleID, String email, String introduction, String contact,  String profileImageURL, String coverImageURL) {
+    public User(String username, String googleID, String email, String introduction, String contact,  String profileImageURL, String coverImageURL, UserType userType) {
         this.username = username;
         this.googleID = googleID;
         this.email = email;
@@ -43,5 +46,6 @@ public class User {
         this.contact = contact;
         this.profileImageURL = profileImageURL;
         this.coverImageURL = coverImageURL;
+        this.userType = userType;
     }
 }

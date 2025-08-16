@@ -22,6 +22,8 @@ import java.net.URI;
 import java.util.List;
 import java.util.Map;
 
+import static ATORY.atory.global.dto.UserType.*;
+
 @Service
 @RequiredArgsConstructor
 public class UserRegisterService {
@@ -46,6 +48,7 @@ public class UserRegisterService {
                 .googleID(artistRegisterDto.getGoogleID())
                 .coverImageURL(null)
                 .profileImageURL(null)
+                .userType(ARTIST)
                 .build());
 
             artistRepository.save(Artist.builder()
@@ -70,6 +73,7 @@ public class UserRegisterService {
                 .googleID(collectorRegisterDto.getGoogleID())
                 .coverImageURL(null)
                 .profileImageURL(null)
+                .userType(COLLECTOR)
                 .build());
 
         collectorRepository.save(Collector.builder()
@@ -94,6 +98,7 @@ public class UserRegisterService {
                 .googleID(galleryRegisterDto.getGoogleID())
                 .coverImageURL(null)
                 .profileImageURL(null)
+                .userType(GALLERY)
                 .build());
 
         galleryRepository.save(Gallery.builder()
