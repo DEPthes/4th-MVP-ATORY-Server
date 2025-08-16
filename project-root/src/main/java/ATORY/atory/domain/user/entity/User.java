@@ -28,6 +28,7 @@ public class User {
     private String introduction;
     private String contact;
 
+    @Enumerated(EnumType.STRING)
     private UserType userType;
 
     @Column(columnDefinition = "JSON", nullable = true)

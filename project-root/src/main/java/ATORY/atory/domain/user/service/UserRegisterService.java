@@ -45,7 +45,7 @@ public class UserRegisterService {
                 .email(artistRegisterDto.getEmail())
                 .contact(artistRegisterDto.getContact())
                 .introduction(artistRegisterDto.getIntroduction())
-                .googleID(artistRegisterDto.getGoogleID())
+                .googleID(artistRegisterDto.getGoogleId())
                 .coverImageURL(null)
                 .profileImageURL(null)
                 .userType(ARTIST)
@@ -58,7 +58,7 @@ public class UserRegisterService {
                             .disclosureStatus(artistRegisterDto.getDisclosureStatus())
                             .build());
 
-            return true;
+        return true;
         }
 
     //콜렉터 회원 가입

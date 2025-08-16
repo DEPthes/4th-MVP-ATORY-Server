@@ -4,17 +4,19 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 @NoArgsConstructor
 @Getter
 @Setter
+@ToString
 public class ArtistRegisterDto {
 
     @Schema(description = "작가 이름")
     private String name;
 
     @Schema(description = "구글 sub")
-    private String googleID;
+    private String googleId;
 
     @Schema(description = "작가 이메일")
     private String email;
