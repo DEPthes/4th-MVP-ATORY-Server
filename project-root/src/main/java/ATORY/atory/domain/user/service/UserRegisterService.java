@@ -22,6 +22,8 @@ import java.net.URI;
 import java.util.List;
 import java.util.Map;
 
+import static ATORY.atory.global.dto.UserType.*;
+
 @Service
 @RequiredArgsConstructor
 public class UserRegisterService {
@@ -43,9 +45,10 @@ public class UserRegisterService {
                 .email(artistRegisterDto.getEmail())
                 .contact(artistRegisterDto.getContact())
                 .introduction(artistRegisterDto.getIntroduction())
-                .googleID(artistRegisterDto.getGoogleID())
+                .googleID(artistRegisterDto.getGoogleId())
                 .coverImageURL(null)
                 .profileImageURL(null)
+                .userType(ARTIST)
                 .build());
 
             artistRepository.save(Artist.builder()
@@ -55,7 +58,7 @@ public class UserRegisterService {
                             .disclosureStatus(artistRegisterDto.getDisclosureStatus())
                             .build());
 
-            return true;
+        return true;
         }
 
     //콜렉터 회원 가입
@@ -70,6 +73,7 @@ public class UserRegisterService {
                 .googleID(collectorRegisterDto.getGoogleID())
                 .coverImageURL(null)
                 .profileImageURL(null)
+                .userType(COLLECTOR)
                 .build());
 
         collectorRepository.save(Collector.builder()
@@ -94,6 +98,7 @@ public class UserRegisterService {
                 .googleID(galleryRegisterDto.getGoogleID())
                 .coverImageURL(null)
                 .profileImageURL(null)
+                .userType(GALLERY)
                 .build());
 
         galleryRepository.save(Gallery.builder()
