@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @NoArgsConstructor
 @Getter
-@Table(name = "Archive")
+@Table(name = "archive")
 public class Archive {
 
     @Id
