@@ -16,7 +16,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByGoogleID(String googleID);
 
     @Query("""
-        SELECT u
+        SELECT DISTINCT u
         FROM User u
         LEFT JOIN Follow f ON f.following = u
         WHERE u.userType = :userType
