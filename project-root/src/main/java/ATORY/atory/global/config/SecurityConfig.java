@@ -1,5 +1,6 @@
 package ATORY.atory.global.config;
 
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
@@ -31,8 +32,17 @@ public class SecurityConfig {
                         // 그 외 요청은 인증 필요
                         .anyRequest().authenticated()
                 )
-                // OAuth2 로그인 (구글)
-                .oauth2Login(Customizer.withDefaults());
+
+                // 브라우저 로그인/리다이렉트 비활성화
+                .formLogin(form -> form.disable())
+                .httpBasic(basic -> basic.disable())
+
+                // 인증 실패 시 → 401 반환
+                .exceptionHandling(ex -> ex
+                        .authenticationEntryPoint((request, response, authException) ->
+                                response.sendError(HttpServletResponse.SC_UNAUTHORIZED)
+                        )
+                );
 
         return http.build();
     }
