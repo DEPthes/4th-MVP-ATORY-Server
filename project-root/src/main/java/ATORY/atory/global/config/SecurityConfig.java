@@ -25,7 +25,8 @@ public class SecurityConfig {
                         ).permitAll()
 
                         // api 허용
-                        .requestMatchers("/api/**").permitAll()
+                        .requestMatchers("/api/**"
+                        ,"/api/gallery/register/**").permitAll()
 
                         // 그 외 요청은 인증 필요
                         .anyRequest().authenticated()
