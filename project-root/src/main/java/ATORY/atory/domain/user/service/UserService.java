@@ -37,19 +37,15 @@ public class UserService {
     }
 
     //사이드 바 유저 정보 조회 로직
-    public UserInfoSideDto loadUserSideInfo(long user_id, String google_id){
+    public UserInfoSideDto loadUserSideInfo(String google_id){
 
         User user = userRepository.findByGoogleID(google_id).orElseThrow(() -> new MapperException(ErrorCode.SER_NOT_FOUND));
-
-        //Google_id를 통해 찾은 user와 id 값 비교
-        if (user.getId() != user_id){
-            throw new IllegalArgumentException("유저 정보가 일치하지 않습니다.");
-        }
 
         return UserInfoSideDto.builder()
                 .id(user.getId())
                 .username(user.getUsername())
                 .profileImageURL(user.getProfileImageURL())
+                .userType(user.getUserType())
                 .build();
     }
 }
