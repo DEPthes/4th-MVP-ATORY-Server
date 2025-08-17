@@ -29,6 +29,7 @@ public class User {
     private String contact;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 20, columnDefinition = "VARCHAR(20)")
     private UserType userType;
 
     @Column(columnDefinition = "JSON", nullable = true)
