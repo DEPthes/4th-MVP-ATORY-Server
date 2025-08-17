@@ -1,8 +1,11 @@
 package ATORY.atory.domain.tag.repository;
 
+import ATORY.atory.domain.tag.dto.TagDto;
 import ATORY.atory.domain.tag.entity.Tag;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 @Repository
 public interface TagRepository extends JpaRepository<Tag, Long> {
