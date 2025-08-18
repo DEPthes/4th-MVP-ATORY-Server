@@ -26,6 +26,7 @@ public class ArchiveService {
         return archiveRepository.countByPostId(postId);
     }
 
+    //아카이브 전환
     public Boolean switchArchive(Long postId, String googleID) {
         User user = userRepository.findByGoogleID(googleID).orElseThrow(() -> new MapperException(ErrorCode.SER_NOT_FOUND));
         Post post = postRepository.findById(postId).orElseThrow(() -> new MapperException(ErrorCode.INTERNAL_SERVER_ERROR));
