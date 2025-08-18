@@ -16,7 +16,7 @@ public class ArtistRegisterDto {
     private String name;
 
     @Schema(description = "구글 sub")
-    private String googleId;
+    private String googleID;
 
     @Schema(description = "작가 이메일")
     private String email;
