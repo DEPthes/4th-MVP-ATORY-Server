@@ -33,10 +33,12 @@ import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -51,6 +53,7 @@ public class PostService {
     private final ArchiveRepository archiveRepository;
     private final ArchiveService archiveService;
     private final TagService tagService;
+    private final S3Service s3Service;
 
     private final ObjectMapper objectMapper;
 
@@ -118,9 +121,15 @@ public class PostService {
         List<String> imageUrls = new ArrayList<>();
 
         for (MultipartFile file : postDto.getImages()){
-            //해당 부분 S3 저장 로직으로 변경 필요
-            String fileName = "test";
-            imageUrls.add(fileName);
+            try {
+                String key = "uploads/" + UUID.randomUUID();
+                String url = s3Service.upload(file, key);
+
+                imageUrls.add(url);
+
+            } catch (IOException e){
+                throw new RuntimeException("파일 업로드 실패: " + file.getOriginalFilename(), e);
+            }
         }
 
         // List<String> → JSON
