@@ -11,6 +11,8 @@ import ATORY.atory.domain.gallery.entity.Gallery;
 import ATORY.atory.domain.gallery.repository.GalleryRepository;
 import ATORY.atory.domain.user.entity.User;
 import ATORY.atory.domain.user.repository.UserRepository;
+import ATORY.atory.global.exception.ErrorCode;
+import ATORY.atory.global.exception.MapperException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
@@ -138,5 +140,47 @@ public class UserRegisterService {
         } else {
             return false;
         }
+    }
+
+    //아티스트 정보 변경
+    public Boolean changeProfileArtist(String googleID, ArtistRegisterDto artistRegisterDto){
+        User user = userRepository.findByGoogleID(googleID).orElseThrow(() -> new MapperException(ErrorCode.SER_NOT_FOUND));
+        Artist artist = artistRepository.findByUser(user);
+
+        user.updateUser(artistRegisterDto);
+        userRepository.save(user);
+
+        artist.update(artistRegisterDto);
+        artistRepository.save(artist);
+
+        return true;
+    }
+
+    //콜렉터 정보 변경
+    public Boolean changeProfileCollector(String googleID, CollectorRegisterDto collectorRegisterDto){
+        User user = userRepository.findByGoogleID(googleID).orElseThrow(() -> new MapperException(ErrorCode.SER_NOT_FOUND));
+        Collector collector = collectorRepository.findByUser(user);
+
+        user.updateUser(collectorRegisterDto);
+        userRepository.save(user);
+
+        collector.update(collectorRegisterDto);
+        collectorRepository.save(collector);
+
+        return true;
+    }
+
+    //갤러리 정보 변경
+    public Boolean changeProfileGallery(String googleID, GalleryRegisterDto galleryRegisterDto){
+        User user = userRepository.findByGoogleID(googleID).orElseThrow(() -> new MapperException(ErrorCode.SER_NOT_FOUND));
+        Gallery gallery = galleryRepository.findByUser(user);
+
+        user.updateUser(galleryRegisterDto);
+        userRepository.save(user);
+
+        gallery.update(galleryRegisterDto);
+        galleryRepository.save(gallery);
+
+        return true;
     }
 }

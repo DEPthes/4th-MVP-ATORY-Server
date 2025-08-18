@@ -34,4 +34,8 @@ public class PostDate {
         this.modifiedAt = modifiedAt;
         this.post = post;
     }
+
+    public void updateModifiedAt(LocalDateTime modifiedAt){
+        this.modifiedAt = modifiedAt;
+    }
 }

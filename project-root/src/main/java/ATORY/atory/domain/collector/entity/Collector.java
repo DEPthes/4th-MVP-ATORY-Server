@@ -1,5 +1,6 @@
 package ATORY.atory.domain.collector.entity;
 
+import ATORY.atory.domain.collector.dto.CollectorRegisterDto;
 import ATORY.atory.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.Builder;
@@ -31,5 +32,11 @@ public class Collector {
         this.birth = birth;
         this.educationBackground = educationBackground;
         this.disclosureStatus = disclosureStatus;
+    }
+
+    public void update(CollectorRegisterDto collectorRegisterDto) {
+        this.birth = collectorRegisterDto.getBirth();
+        this.educationBackground = collectorRegisterDto.getEducationBackground();
+        this.disclosureStatus = collectorRegisterDto.getDisclosureStatus();
     }
 }

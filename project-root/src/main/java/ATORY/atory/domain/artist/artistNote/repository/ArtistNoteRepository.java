@@ -9,5 +9,4 @@ import java.util.List;
 @Repository
 public interface ArtistNoteRepository extends JpaRepository<ArtistNote, Long> {
     List<ArtistNote> findByArtistId(Long artistId);
-
 }

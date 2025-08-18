@@ -1,5 +1,8 @@
 package ATORY.atory.domain.user.entity;
 
+import ATORY.atory.domain.artist.dto.ArtistRegisterDto;
+import ATORY.atory.domain.collector.dto.CollectorRegisterDto;
+import ATORY.atory.domain.gallery.dto.GalleryRegisterDto;
 import ATORY.atory.global.dto.UserType;
 import jakarta.persistence.*;
 import lombok.Builder;
@@ -49,5 +52,34 @@ public class User {
         this.profileImageURL = profileImageURL;
         this.coverImageURL = coverImageURL;
         this.userType = userType;
+    }
+
+    public void changeProfileImageURL(String profileImageURL) {
+        this.profileImageURL = profileImageURL;
+    }
+
+    public void changeCoverImageURL(String coverImageURL) {
+        this.coverImageURL = coverImageURL;
+    }
+
+    public void updateUser(GalleryRegisterDto galleryRegisterDto) {
+        this.username = galleryRegisterDto.getUserName();
+        this.contact = galleryRegisterDto.getContact();
+        this.email = galleryRegisterDto.getEmail();
+        this.introduction = galleryRegisterDto.getIntroduction();
+    }
+
+    public void updateUser(CollectorRegisterDto collectorRegisterDto) {
+        this.username = collectorRegisterDto.getName();
+        this.contact = collectorRegisterDto.getContact();
+        this.email = collectorRegisterDto.getEmail();
+        this.introduction = collectorRegisterDto.getIntroduction();
+    }
+
+    public void updateUser(ArtistRegisterDto artistRegisterDto) {
+        this.username = artistRegisterDto.getName();
+        this.contact = artistRegisterDto.getContact();
+        this.email = artistRegisterDto.getEmail();
+        this.introduction = artistRegisterDto.getIntroduction();
     }
 }
