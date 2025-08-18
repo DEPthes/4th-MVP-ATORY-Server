@@ -3,6 +3,7 @@ package ATORY.atory.domain.user.service;
 import ATORY.atory.domain.follow.service.FollowService;
 
 import ATORY.atory.domain.user.dto.UserDto;
+import ATORY.atory.domain.user.dto.UserInfoSideDto;
 import ATORY.atory.domain.user.entity.User;
 import ATORY.atory.domain.user.repository.UserRepository;
 import ATORY.atory.global.exception.ErrorCode;
@@ -35,4 +36,16 @@ public class UserService {
                 .build();
     }
 
+    //사이드 바 유저 정보 조회 로직
+    public UserInfoSideDto loadUserSideInfo(String google_id){
+
+        User user = userRepository.findByGoogleID(google_id).orElseThrow(() -> new MapperException(ErrorCode.SER_NOT_FOUND));
+
+        return UserInfoSideDto.builder()
+                .id(user.getId())
+                .username(user.getUsername())
+                .profileImageURL(user.getProfileImageURL())
+                .userType(user.getUserType())
+                .build();
+    }
 }

@@ -1,5 +1,6 @@
 package ATORY.atory.domain.user.entity;
 
+import ATORY.atory.global.dto.UserType;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -13,7 +14,12 @@ import lombok.NoArgsConstructor;
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_seq")
+    @SequenceGenerator(
+            name = "user_seq",
+            sequenceName = "user_sequence",
+            allocationSize = 1
+    )
     private Long id;
 
     private String username;
@@ -21,6 +27,10 @@ public class User {
     private String email;
     private String introduction;
     private String contact;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 20, columnDefinition = "VARCHAR(20)")
+    private UserType userType;
 
     @Column(columnDefinition = "JSON", nullable = true)
     private String profileImageURL;
@@ -30,7 +40,7 @@ public class User {
 
 
     @Builder
-    public User(String username, String googleID, String email, String introduction, String contact,  String profileImageURL, String coverImageURL) {
+    public User(String username, String googleID, String email, String introduction, String contact,  String profileImageURL, String coverImageURL, UserType userType) {
         this.username = username;
         this.googleID = googleID;
         this.email = email;
@@ -38,5 +48,6 @@ public class User {
         this.contact = contact;
         this.profileImageURL = profileImageURL;
         this.coverImageURL = coverImageURL;
+        this.userType = userType;
     }
 }
