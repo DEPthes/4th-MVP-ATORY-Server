@@ -61,7 +61,7 @@ public class PostController {
             @ApiResponse(responseCode = "500", description = "서버 오류 발생")
     })
     @GetMapping("/detail")
-    public ApiResult<PostDto> getPostDetail(@RequestParam Long postID){
-        return ApiResult.ok(postService.loadPost(postID));
+    public ApiResult<PostDto> getPostDetail(@RequestParam Long postID, @RequestParam String googleID){
+        return ApiResult.ok(postService.loadPost(postID, googleID));
     }
 }

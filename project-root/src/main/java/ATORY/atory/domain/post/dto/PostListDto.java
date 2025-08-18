@@ -18,4 +18,5 @@ public class PostListDto {
     private String userName;
     private Long archived;
     private Boolean isMine;
+    private Boolean isArchived;
 }
