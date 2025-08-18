@@ -19,7 +19,6 @@ import ATORY.atory.domain.tag.repository.TagRepository;
 import ATORY.atory.domain.tag.service.TagService;
 import ATORY.atory.domain.user.entity.User;
 import ATORY.atory.domain.user.repository.UserRepository;
-import ATORY.atory.domain.user.service.UserService;
 import ATORY.atory.global.exception.ErrorCode;
 import ATORY.atory.global.exception.MapperException;
 import com.fasterxml.jackson.core.JsonProcessingException;
