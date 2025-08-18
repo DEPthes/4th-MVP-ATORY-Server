@@ -6,6 +6,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public interface ArchiveRepository extends JpaRepository<Archive, Long> {
 
@@ -15,4 +17,5 @@ public interface ArchiveRepository extends JpaRepository<Archive, Long> {
     @Query("SELECT COUNT(a) > 0 FROM Archive a WHERE a.user.id = :userId AND a.post.id = :postId")
     boolean existsByUserIdAndPostId(@Param("userId") Long userId, @Param("postId") Long postId);
 
+    Optional<Archive> findByUserIdAndPostId(Long userId, Long postId);
 }
