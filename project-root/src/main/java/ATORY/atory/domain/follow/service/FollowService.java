@@ -31,6 +31,9 @@ public class FollowService {
         return followRepository.countFollowing(user);
     }
 
+    /**
+     * 팔로우 / 언팔로우 토글
+     */
     public FollowToggleResponse toggle(String googleId, Long id) {
         // 본인 조회
         User me = userRepository.findByGoogleID(googleId)
@@ -67,38 +70,49 @@ public class FollowService {
 
         return FollowToggleResponse.builder()
                 .targetUserId(id)
-                .isFollowing(!existed) // 토글 후 상태
+                .following(!existed) // 토글 후 상태
                 .targetFollowerCount(targetFollowers)
                 .build();
 
     }
 
-    // 전체 팔로워 리스트 조회
+    /**
+     * 전체 팔로워 조회
+     */
     public List<FollowUserDto> getAllFollowers(Long id) {
         validateUserExists(id);
         return followRepository.findAllFollowersOf(id).stream()
                 .map(this::toDto)
                 .toList();
     }
-    // 전체 팔로잉 리스트 조회
+
+    /**
+     * 전체 팔로잉 조회
+     */
     public List<FollowUserDto> getAllFollowing(Long id) {
         validateUserExists(id);
         return followRepository.findAllFollowingOf(id).stream()
                 .map(this::toDto)
                 .toList();
     }
-    // DTO 변환
+
+    /**
+     * 유저 존재 여부 확인
+     */
+    private void validateUserExists(Long userId) {
+        if (!userRepository.existsById(userId)) {
+            throw new MapperException(ErrorCode.SER_NOT_FOUND);
+        }
+    }
+
+    /**
+     * User → DTO 변환
+     */
     private FollowUserDto toDto(User user) {
         return FollowUserDto.builder()
                 .userId(user.getId())
                 .nickname(user.getUsername())
                 .profileImageUrl(user.getProfileImageURL())
                 .build();
-    }
-    // 유저 정보 확인 메서드
-    private void validateUserExists(Long userId) {
-        if (!userRepository.existsById(userId)) {
-            throw new MapperException(ErrorCode.SER_NOT_FOUND);
-        }
     }
 }
