@@ -1,6 +1,7 @@
 package ATORY.atory.domain.follow.service;
 
 import ATORY.atory.domain.follow.dto.FollowToggleResponse;
+import ATORY.atory.domain.follow.dto.FollowUserDto;
 import ATORY.atory.domain.follow.entity.Follow;
 import ATORY.atory.domain.follow.repository.FollowRepository;
 import ATORY.atory.domain.user.entity.User;
@@ -11,6 +12,8 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @RequiredArgsConstructor
 @Service
@@ -39,9 +42,7 @@ public class FollowService {
         }
 
         // 대상 유저 존재 여부 확인
-        if (!userRepository.existsById(id)){
-            throw new MapperException(ErrorCode.SER_NOT_FOUND);
-        }
+        validateUserExists(id);
 
         // 현재 팔로우 상태 확인
         boolean existed = followRepository.existsByFollower_IdAndFollowing_Id(me.getId(), id);
@@ -70,5 +71,34 @@ public class FollowService {
                 .targetFollowerCount(targetFollowers)
                 .build();
 
+    }
+
+    // 전체 팔로워 리스트 조회
+    public List<FollowUserDto> getAllFollowers(Long id) {
+        validateUserExists(id);
+        return followRepository.findAllFollowersOf(id).stream()
+                .map(this::toDto)
+                .toList();
+    }
+    // 전체 팔로잉 리스트 조회
+    public List<FollowUserDto> getAllFollowing(Long id) {
+        validateUserExists(id);
+        return followRepository.findAllFollowingOf(id).stream()
+                .map(this::toDto)
+                .toList();
+    }
+    // DTO 변환
+    private FollowUserDto toDto(User user) {
+        return FollowUserDto.builder()
+                .userId(user.getId())
+                .nickname(user.getUsername())
+                .profileImageUrl(user.getProfileImageURL())
+                .build();
+    }
+    // 유저 정보 확인 메서드
+    private void validateUserExists(Long userId) {
+        if (!userRepository.existsById(userId)) {
+            throw new MapperException(ErrorCode.SER_NOT_FOUND);
+        }
     }
 }

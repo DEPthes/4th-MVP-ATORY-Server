@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import java.util.List;
 
 @Repository
 public interface FollowRepository extends JpaRepository<Follow, Long> {
@@ -27,4 +28,12 @@ public interface FollowRepository extends JpaRepository<Follow, Long> {
 
     // 대상 유저의 팔로워 수 조회
     long countByFollowing_Id(Long id);
+
+    // 팔로워 리스트 조회
+    @Query("select f.follower from Follow f where f.following.id = :id order by f.follower.username asc")
+    List<User> findAllFollowersOf(Long id);
+
+    // 팔로잉 리스트 조회
+    @Query("select f.following from Follow f where f.follower.id = :id order by f.following.username asc")
+    List<User> findAllFollowingOf(Long id);
 }
