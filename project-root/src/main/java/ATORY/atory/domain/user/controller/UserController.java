@@ -98,4 +98,37 @@ public class UserController {
     public ApiResult<Boolean> changeCoverImage(@RequestParam String googleID, @RequestParam MultipartFile profileImage) throws IOException {
         return ApiResult.ok(userService.changeCoverImage(googleID, profileImage));
     }
+
+    @Operation(summary = "아티스트 프로필 변경", description = "아티스트 프로필 변경")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "성공적으로 확인됨"),
+            @ApiResponse(responseCode = "400", description = "잘못된 입력 값"),
+            @ApiResponse(responseCode = "500", description = "서버 오류 발생")
+    })
+    @PostMapping("/change/artist")
+    public ApiResult<Boolean> changeArtist(@RequestParam String googleID, @RequestBody ArtistRegisterDto artistRegisterDto){
+        return ApiResult.ok(userRegisterService.changeProfileArtist(googleID, artistRegisterDto));
+    }
+
+    @Operation(summary = "콜렉터 프로필 변경", description = "콜렉터 프로필 변경")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "성공적으로 확인됨"),
+            @ApiResponse(responseCode = "400", description = "잘못된 입력 값"),
+            @ApiResponse(responseCode = "500", description = "서버 오류 발생")
+    })
+    @PostMapping("/change/collector")
+    public ApiResult<Boolean> changeCollector(@RequestParam String googleID, @RequestBody CollectorRegisterDto collectorRegisterDto){
+        return ApiResult.ok(userRegisterService.changeProfileCollector(googleID, collectorRegisterDto));
+    }
+
+    @Operation(summary = "갤러리 프로필 변경", description = "갤러리 프로필 변경")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "성공적으로 확인됨"),
+            @ApiResponse(responseCode = "400", description = "잘못된 입력 값"),
+            @ApiResponse(responseCode = "500", description = "서버 오류 발생")
+    })
+    @PostMapping("/change/gallery")
+    public ApiResult<Boolean> changeGallery(@RequestParam String googleID, @RequestBody GalleryRegisterDto galleryRegisterDto){
+        return ApiResult.ok(userRegisterService.changeProfileGallery(googleID, galleryRegisterDto));
+    }
 }

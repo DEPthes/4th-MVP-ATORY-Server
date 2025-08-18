@@ -1,5 +1,6 @@
 package ATORY.atory.domain.gallery.entity;
 
+import ATORY.atory.domain.gallery.dto.GalleryRegisterDto;
 import ATORY.atory.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.Builder;
@@ -31,5 +32,11 @@ public class Gallery {
         this.name = name;
         this.location = location;
         this.registrationNumber = registrationNumber;
+    }
+
+    public void update(GalleryRegisterDto galleryRegisterDto) {
+        this.name = galleryRegisterDto.getGalleryName();
+        this.location = galleryRegisterDto.getLocation();
+        this.registrationNumber = galleryRegisterDto.getRegistrationNumber();
     }
 }
