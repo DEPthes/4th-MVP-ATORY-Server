@@ -50,4 +50,12 @@ public class User {
         this.coverImageURL = coverImageURL;
         this.userType = userType;
     }
+
+    public void changeProfileImageURL(String profileImageURL) {
+        this.profileImageURL = profileImageURL;
+    }
+
+    public void changeCoverImageURL(String coverImageURL) {
+        this.coverImageURL = coverImageURL;
+    }
 }

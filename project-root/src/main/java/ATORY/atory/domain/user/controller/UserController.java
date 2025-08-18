@@ -12,6 +12,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 @RestController
 @RequestMapping("api/user")
@@ -72,5 +75,27 @@ public class UserController {
         UserInfoSideDto result = userService.loadUserSideInfo(google_id);
 
         return ApiResult.ok(result);
+    }
+
+    @Operation(summary = "유저 프로필 사진 변경", description = "유저 프로필 사진 변경")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "성공적으로 확인됨"),
+            @ApiResponse(responseCode = "400", description = "잘못된 입력 값"),
+            @ApiResponse(responseCode = "500", description = "서버 오류 발생")
+    })
+    @PostMapping("/change/profile")
+    public ApiResult<Boolean> changeProfileImage(@RequestParam String googleID, @RequestParam MultipartFile profileImage) throws IOException {
+        return ApiResult.ok(userService.changeProfileImage(googleID, profileImage));
+    }
+
+    @Operation(summary = "유저 커버 사진 변경", description = "유저 커버 사진 변경")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "성공적으로 확인됨"),
+            @ApiResponse(responseCode = "400", description = "잘못된 입력 값"),
+            @ApiResponse(responseCode = "500", description = "서버 오류 발생")
+    })
+    @PostMapping("/change/cover")
+    public ApiResult<Boolean> changeCoverImage(@RequestParam String googleID, @RequestParam MultipartFile profileImage) throws IOException {
+        return ApiResult.ok(userService.changeCoverImage(googleID, profileImage));
     }
 }
