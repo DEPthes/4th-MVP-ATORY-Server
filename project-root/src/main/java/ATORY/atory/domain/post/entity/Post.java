@@ -1,5 +1,7 @@
 package ATORY.atory.domain.post.entity;
 
+import ATORY.atory.domain.post.dto.PostDto;
+import ATORY.atory.domain.post.dto.PostSaveDto;
 import ATORY.atory.domain.tag.entity.TagPost;
 import ATORY.atory.domain.user.entity.User;
 import jakarta.persistence.*;
@@ -50,5 +52,13 @@ public class Post {
         this.exhibitionURL = exhibitionURL;
         this.description = description;
         this.postType = postType;
+    }
+
+    public void updatePost(PostSaveDto dto, String imageURL, String exhibitionURL) {
+        this.name = dto.getTitle();
+        this.imageURL = imageURL;
+        this.exhibitionURL = exhibitionURL;
+        this.description = dto.getDescription();
+        this.postType = dto.getPostType();
     }
 }

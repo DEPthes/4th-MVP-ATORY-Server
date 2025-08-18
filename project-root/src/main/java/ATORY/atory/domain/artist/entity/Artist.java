@@ -1,5 +1,6 @@
 package ATORY.atory.domain.artist.entity;
 
+import ATORY.atory.domain.artist.dto.ArtistRegisterDto;
 import ATORY.atory.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.Builder;
@@ -33,5 +34,11 @@ public class Artist {
         this.birth = birth;
         this.educationBackground = educationBackground;
         this.disclosureStatus = disclosureStatus;
+    }
+
+    public void update(ArtistRegisterDto artistRegisterDto) {
+        this.birth = artistRegisterDto.getBirth();
+        this.educationBackground = artistRegisterDto.getEducationBackground();
+        this.disclosureStatus = artistRegisterDto.getDisclosureStatus();
     }
 }

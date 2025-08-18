@@ -2,6 +2,7 @@ package ATORY.atory.domain.user.service;
 
 import ATORY.atory.domain.follow.service.FollowService;
 
+import ATORY.atory.domain.post.service.S3Service;
 import ATORY.atory.domain.user.dto.UserDto;
 import ATORY.atory.domain.user.dto.UserInfoSideDto;
 import ATORY.atory.domain.user.entity.User;
@@ -11,6 +12,10 @@ import ATORY.atory.global.exception.MapperException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -19,6 +24,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final FollowService followService;
+    private final S3Service s3Service;
 
     public UserDto getById(Long Id){
         User user = userRepository.findById(Id).orElseThrow(() -> new MapperException(ErrorCode.SER_NOT_FOUND));
@@ -47,5 +53,51 @@ public class UserService {
                 .profileImageURL(user.getProfileImageURL())
                 .userType(user.getUserType())
                 .build();
+    }
+
+    //프로필 이미지 변경
+    public Boolean changeProfileImage(String googleID, MultipartFile file) throws IOException {
+        User user = userRepository.findByGoogleID(googleID).orElseThrow(() -> new MapperException(ErrorCode.SER_NOT_FOUND));
+
+        if (user.getProfileImageURL() == null){
+            String key = "uploads/" + UUID.randomUUID();
+            String url = s3Service.upload(file, key);
+
+            user.changeProfileImageURL(url);
+            userRepository.save(user);
+        } else {
+            s3Service.delete(user.getProfileImageURL());
+
+            String key = "uploads/" + UUID.randomUUID();
+            String url = s3Service.upload(file, key);
+
+            user.changeProfileImageURL(url);
+            userRepository.save(user);
+        }
+
+        return true;
+    }
+
+    //커버 이미지 변경
+    public Boolean changeCoverImage(String googleID, MultipartFile file) throws IOException {
+        User user = userRepository.findByGoogleID(googleID).orElseThrow(() -> new MapperException(ErrorCode.SER_NOT_FOUND));
+
+        if (user.getCoverImageURL() == null){
+            String key = "uploads/" + UUID.randomUUID();
+            String url = s3Service.upload(file, key);
+
+            user.changeCoverImageURL(url);
+            userRepository.save(user);
+        } else {
+            s3Service.delete(user.getCoverImageURL());
+
+            String key = "uploads/" + UUID.randomUUID();
+            String url = s3Service.upload(file, key);
+
+            user.changeCoverImageURL(url);
+            userRepository.save(user);
+        }
+
+        return true;
     }
 }

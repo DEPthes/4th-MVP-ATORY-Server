@@ -14,7 +14,7 @@ import java.util.List;
 public class PostSaveDto {
     private String title;
     private List<MultipartFile> images;
-    private String url;
+    private List<String> url;
     private String description;
     private List<Long> tagIDs;
     private PostType postType;
