@@ -1,5 +1,6 @@
 package ATORY.atory.domain.post.controller;
 
+import ATORY.atory.domain.post.dto.PostDto;
 import ATORY.atory.domain.post.dto.PostListDto;
 import ATORY.atory.domain.post.dto.PostSaveDto;
 import ATORY.atory.domain.post.entity.PostType;
@@ -33,7 +34,7 @@ public class PostController {
         return ApiResult.ok(postService.savePost(postSaveDto, googleID));
     }
 
-    @Operation(summary = "게시물 조회", description = "페인페이지 게시물 조회 타입에 따라 조회 게시물 다름")
+    @Operation(summary = "게시물 조회", description = "메인페이지 게시물 조회 타입에 따라 조회 게시물 다름")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공적으로 확인됨"),
             @ApiResponse(responseCode = "400", description = "잘못된 입력 값"),
@@ -51,5 +52,16 @@ public class PostController {
         Page<PostListDto> posts = postService.loadPosts(pageable, googleID, tagName, postType);
 
         return ApiResult.ok(posts);
+    }
+
+    @Operation(summary = "게시물 상세 페이지 조회", description = "게시물 조회 타입에 따라 조회 게시물 다름")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "성공적으로 확인됨"),
+            @ApiResponse(responseCode = "400", description = "잘못된 입력 값"),
+            @ApiResponse(responseCode = "500", description = "서버 오류 발생")
+    })
+    @GetMapping("/detail")
+    public ApiResult<PostDto> getPostDetail(@RequestParam Long postID){
+        return ApiResult.ok(postService.loadPost(postID));
     }
 }

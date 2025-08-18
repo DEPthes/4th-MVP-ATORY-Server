@@ -22,14 +22,17 @@ public class PostDto {
     @Schema(description = "게시물 ID", example = "1001")
     private Long id;
 
+    @Schema(description = "유저 ID", example = "1001")
+    private Long userId;
+
     @Schema(description = "게시물 제목", example = "첫 전시회")
     private String name;
 
     @Schema(description = "이미지 URL", example = "http://example.com/image.jpg")
-    private String imageURL;
+    private List<String> imageURL;
 
     @Schema(description = "전시회 URL", example = "http://exhibition.example.com")
-    private String exhibitionURL;
+    private List<String> exhibitionURL;
 
     @Schema(description = "게시물 설명", example = "서울 아트페어 참가작")
     private String description;
@@ -47,7 +50,7 @@ public class PostDto {
     private List<TagDto> tags;
 
     @Builder
-    public PostDto(Long id, String name, String imageURL, String exhibitionURL, String description, PostType postType,PostDateDto postDate,Long archived,List<TagDto> tags) {
+    public PostDto(Long id, String name, List<String> imageURL, List<String> exhibitionURL, String description, PostType postType,PostDateDto postDate,Long archived,List<TagDto> tags) {
         this.id = id;
         this.name = name;
         this.imageURL = imageURL;

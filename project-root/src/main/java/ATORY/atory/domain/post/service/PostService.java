@@ -70,11 +70,36 @@ public class PostService {
 
         return posts.map(post -> {
             Long archiveCount = archiveService.getArchiveCountByPostId(post.getId());
+
+            List<String> imageUrls = new ArrayList<>();
+            try {
+                if (post.getImageURL() != null) {
+                    imageUrls = objectMapper.readValue(
+                            post.getImageURL(),
+                            new TypeReference<List<String>>() {}
+                    );
+                }
+            } catch (IOException e) {
+                throw new RuntimeException("이미지 URL JSON 파싱 실패", e);
+            }
+
+            List<String> url = new ArrayList<>();
+            try {
+                if (post.getExhibitionURL() != null) {
+                    imageUrls = objectMapper.readValue(
+                            post.getImageURL(),
+                            new TypeReference<List<String>>() {}
+                    );
+                }
+            } catch (IOException e) {
+                throw new RuntimeException("이미지 URL JSON 파싱 실패", e);
+            }
+
             return PostDto.builder()
                     .id(post.getId())
                     .name(post.getName())
-                    .imageURL(post.getImageURL())
-                    .exhibitionURL(post.getExhibitionURL())
+                    .imageURL(imageUrls)
+                    .exhibitionURL(url)
                     .description(post.getDescription())
                     .postType(post.getPostType())
                     .postDate(PostDateDto.from(postDateRepository.findByPostId(post.getId())))
@@ -99,11 +124,36 @@ public class PostService {
 
         return posts.map(post -> {
             Long archiveCount = archiveService.getArchiveCountByPostId(post.getId());
+
+            List<String> imageUrls = new ArrayList<>();
+            try {
+                if (post.getImageURL() != null) {
+                    imageUrls = objectMapper.readValue(
+                            post.getImageURL(),
+                            new TypeReference<List<String>>() {}
+                    );
+                }
+            } catch (IOException e) {
+                throw new RuntimeException("이미지 URL JSON 파싱 실패", e);
+            }
+
+            List<String> url = new ArrayList<>();
+            try {
+                if (post.getExhibitionURL() != null) {
+                    imageUrls = objectMapper.readValue(
+                            post.getImageURL(),
+                            new TypeReference<List<String>>() {}
+                    );
+                }
+            } catch (IOException e) {
+                throw new RuntimeException("이미지 URL JSON 파싱 실패", e);
+            }
+
             return PostDto.builder()
                     .id(post.getId())
                     .name(post.getName())
-                    .imageURL(post.getImageURL())
-                    .exhibitionURL(post.getExhibitionURL())
+                    .imageURL(imageUrls)
+                    .exhibitionURL(url)
                     .description(post.getDescription())
                     .postType(post.getPostType())
                     .postDate(PostDateDto.from(postDateRepository.findByPostId(post.getId())))
@@ -120,6 +170,7 @@ public class PostService {
 
         List<String> imageUrls = new ArrayList<>();
 
+        //이미지 파일 업로드
         for (MultipartFile file : postDto.getImages()){
             try {
                 String key = "uploads/" + UUID.randomUUID();
@@ -180,6 +231,7 @@ public class PostService {
         return posts.map(post -> toDto(post, currentUser.getId()));
     }
 
+    //메인 페이지 게시글 Dto 변환
     private PostListDto toDto(Post post, Long currentUserId) {
         PostListDto dto = new PostListDto();
         dto.setPostId(post.getId().toString());
@@ -212,5 +264,57 @@ public class PostService {
         return dto;
     }
 
+    //게시물 상세 페이지 조회
+    public PostDto loadPost(Long postId) {
+        Post post = postRepository.findById(postId).orElseThrow(() -> new MapperException(ErrorCode.INTERNAL_SERVER_ERROR));
 
+        long archiveCount = archiveRepository.countByPostId(post.getId());
+
+        //이미지 URL 불러오기
+        List<String> imageUrls = new ArrayList<>();
+        try {
+            if (post.getImageURL() != null) {
+                imageUrls = objectMapper.readValue(
+                        post.getImageURL(),
+                        new TypeReference<List<String>>() {}
+                );
+            }
+        } catch (IOException e) {
+            throw new RuntimeException("이미지 URL JSON 파싱 실패", e);
+        }
+
+        //Exhibition URL 불러오기
+        List<String> url = new ArrayList<>();
+        try {
+            if (post.getExhibitionURL() != null) {
+                url = objectMapper.readValue(
+                        post.getExhibitionURL(),
+                        new TypeReference<List<String>>() {}
+                );
+            }
+        } catch (IOException e) {
+            throw new RuntimeException("이미지 URL JSON 파싱 실패", e);
+        }
+
+        // 태그 불러오기
+        List<TagDto> tags = tagService.getByPostId(post.getId())
+                .stream()
+                .map(tagPost -> TagDto.from(tagPost.getTag()))
+                .toList();
+
+        PostDto postDto = new PostDto();
+
+        postDto.setPostType(post.getPostType());
+        postDto.setId(post.getId());
+        postDto.setDescription(post.getDescription());
+        postDto.setArchived(archiveCount);
+        postDto.setUserId(post.getUser().getId());
+        postDto.setExhibitionURL(url);
+        postDto.setName(post.getName());
+        postDto.setImageURL(imageUrls);
+        postDto.setPostDate(PostDateDto.from(postDateRepository.findByPostId(post.getId())));
+        postDto.setTags(tags);
+
+        return postDto;
+    }
 }
