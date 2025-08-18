@@ -1,5 +1,6 @@
 package ATORY.atory.domain.post.service;
 
+import ATORY.atory.domain.archive.entity.Archive;
 import ATORY.atory.domain.archive.repository.ArchiveRepository;
 import ATORY.atory.domain.archive.service.ArchiveService;
 import ATORY.atory.domain.post.dto.PostDateDto;
@@ -313,6 +314,7 @@ public class PostService {
         postDto.setExhibitionURL(url);
         postDto.setName(post.getName());
         postDto.setImageURL(imageUrls);
+        postDto.setUserType(post.getUser().getUserType());
         postDto.setPostDate(PostDateDto.from(postDateRepository.findByPostId(post.getId())));
         postDto.setIsMine(post.getUser().getGoogleID().equals(googleID));
         postDto.setIsArchived(archiveRepository.existsByUserIdAndPostId(currentUser.getId(), post.getId()));
@@ -321,6 +323,7 @@ public class PostService {
         return postDto;
     }
 
+    //검색
     public Page<PostListDto> searchPosts(Pageable pageable, String googleID, String tag, PostType postType, String text) {
         User currentUser = userRepository.findByGoogleID(googleID).orElseThrow(() -> new MapperException(ErrorCode.SER_NOT_FOUND));
 
@@ -332,5 +335,92 @@ public class PostService {
         }
 
         return posts.map(post -> toDto(post, currentUser.getId()));
+    }
+
+    //게시물 삭제
+    public Boolean deletePost(Long postId, String googleID) {
+        User currentUser = userRepository.findByGoogleID(googleID).orElseThrow(() -> new MapperException(ErrorCode.SER_NOT_FOUND));
+        Post post = postRepository.findById(postId).orElseThrow(() -> new MapperException(ErrorCode.INTERNAL_SERVER_ERROR));
+
+        PostDate postDate = postDateRepository.findByPostId(postId);
+        postDateRepository.delete(postDate);
+
+        List<TagPost> tagPosts = tagPostRepository.findByPostId(postId);
+        tagPostRepository.deleteAll(tagPosts);
+
+        List<Archive> archives = archiveRepository.findByPostId(postId);
+        archiveRepository.deleteAll(archives);
+
+        postRepository.delete(post);
+
+        return true;
+    }
+
+    //게시글 수정
+    public Boolean changePost(Long postId, String googleID, PostSaveDto postDto) throws JsonProcessingException {
+        User currentUser = userRepository.findByGoogleID(googleID).orElseThrow(() -> new MapperException(ErrorCode.SER_NOT_FOUND));
+        Post post = postRepository.findById(postId).orElseThrow(() -> new MapperException(ErrorCode.INTERNAL_SERVER_ERROR));
+        PostDate postDate = postDateRepository.findByPostId(postId);
+
+        //이미지 URL 불러오기
+        List<String> imageUrls = new ArrayList<>();
+        try {
+            if (post.getImageURL() != null) {
+                imageUrls = objectMapper.readValue(
+                        post.getImageURL(),
+                        new TypeReference<List<String>>() {}
+                );
+            }
+        } catch (IOException e) {
+            throw new RuntimeException("이미지 URL JSON 파싱 실패", e);
+        }
+
+        //저장된 이미지 삭제
+        for (String imageUrl : imageUrls) {
+            s3Service.delete(imageUrl);
+        }
+
+        List<String> uploadImageUrls = new ArrayList<>();
+
+        //이미지 파일 업로드
+        for (MultipartFile file : postDto.getImages()){
+            try {
+                String key = "uploads/" + UUID.randomUUID();
+                String url = s3Service.upload(file, key);
+
+                uploadImageUrls.add(url);
+
+            } catch (IOException e){
+                throw new RuntimeException("파일 업로드 실패: " + file.getOriginalFilename(), e);
+            }
+        }
+
+        // List<String> → JSON
+        String imageUrlsJson = objectMapper.writeValueAsString(uploadImageUrls);
+        String exhibitionUrlJson = objectMapper.writeValueAsString(postDto.getUrl());
+
+        //포스트 변경
+        post.updatePost(postDto, imageUrlsJson, exhibitionUrlJson);
+        postRepository.save(post);
+
+        //포스트 데이트 수정시간 변경
+        postDate.updateModifiedAt(LocalDateTime.now());
+        postDateRepository.save(postDate);
+
+        //게시물 태그 삭제
+        List<TagPost> tagPosts = tagPostRepository.findByPostId(postId);
+        tagPostRepository.deleteAll(tagPosts);
+
+        //게시물 태그 저장
+        for (Long id : postDto.getTagIDs()){
+            Tag tag = tagRepository.findById(id).orElseThrow(() -> new MapperException(ErrorCode.SER_NOT_FOUND));
+
+            tagPostRepository.save(TagPost.builder()
+                    .post(post)
+                    .tag(tag)
+                    .build());
+        }
+
+        return true;
     }
 }

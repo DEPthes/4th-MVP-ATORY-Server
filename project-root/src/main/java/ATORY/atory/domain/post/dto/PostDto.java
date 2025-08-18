@@ -4,6 +4,7 @@ import ATORY.atory.domain.post.entity.Post;
 import ATORY.atory.domain.post.entity.PostType;
 import ATORY.atory.domain.tag.dto.TagDto;
 import ATORY.atory.domain.user.entity.User;
+import ATORY.atory.global.dto.UserType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
@@ -39,6 +40,9 @@ public class PostDto {
 
     @Schema(description = "게시물 타입", example = "ART")
     private PostType postType;
+
+    @Schema(description = "유저 타입", example = "COLLECTOR")
+    private UserType userType;
 
     @Schema(description = "게시물 생성 및 수정 날짜 정보")
     private PostDateDto postDate;

@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -18,4 +19,6 @@ public interface ArchiveRepository extends JpaRepository<Archive, Long> {
     boolean existsByUserIdAndPostId(@Param("userId") Long userId, @Param("postId") Long postId);
 
     Optional<Archive> findByUserIdAndPostId(Long userId, Long postId);
+
+    List<Archive> findByPostId(Long postId);
 }
