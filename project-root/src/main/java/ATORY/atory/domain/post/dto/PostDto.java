@@ -49,6 +49,12 @@ public class PostDto {
     @Schema(description = "게시물 태그 목록")
     private List<TagDto> tags;
 
+    @Schema(description = "내 게시물인지 아닌지", example = "true")
+    private Boolean isMine;
+
+    @Schema(description = "아카이브 여부", example = "true")
+    private Boolean isArchived;
+
     @Builder
     public PostDto(Long id, String name, List<String> imageURL, List<String> exhibitionURL, String description, PostType postType,PostDateDto postDate,Long archived,List<TagDto> tags) {
         this.id = id;
