@@ -1,6 +1,7 @@
 package ATORY.atory.domain.post.repository;
 
 import ATORY.atory.domain.post.entity.Post;
+import ATORY.atory.domain.post.entity.PostType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -36,5 +37,34 @@ public interface PostRepository extends JpaRepository<Post, Long> {
                                                @Param("tagName") String tagName,
                                                Pageable pageable);
 
+    // 전체 조회 (최신순)
+    @Query("""
+        SELECT p
+        FROM Post p
+        JOIN FETCH p.user u
+        JOIN PostDate pd ON pd.post = p
+        WHERE p.postType = :postType
+        ORDER BY pd.createdAt DESC
+    """)
+    Page<Post> findAllOrderByCreatedAtDesc(@Param("postType") PostType postType,
+                                           Pageable pageable);
+
+    // 태그별 조회 (최신순)
+    @Query("""
+        SELECT DISTINCT p
+        FROM Post p
+        JOIN FETCH p.user u
+        JOIN PostDate pd ON pd.post = p
+        JOIN TagPost tp ON tp.post = p
+        JOIN Tag t ON tp.tag = t
+        WHERE t.name = :tagName
+          AND p.postType = :postType
+        ORDER BY pd.createdAt DESC
+    """)
+    Page<Post> findByTagNameOrderByCreatedAtDesc(
+            @Param("tagName") String tagName,
+            @Param("postType") PostType postType,
+            Pageable pageable
+    );
 }
 
