@@ -45,7 +45,7 @@ public class UserRegisterService {
                 .email(artistRegisterDto.getEmail())
                 .contact(artistRegisterDto.getContact())
                 .introduction(artistRegisterDto.getIntroduction())
-                .googleID(artistRegisterDto.getGoogleId())
+                .googleID(artistRegisterDto.getGoogleID())
                 .coverImageURL(null)
                 .profileImageURL(null)
                 .userType(ARTIST)
