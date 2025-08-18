@@ -14,8 +14,8 @@ public class FollowController {
     @PostMapping("/{id}/follow")
     public ResponseEntity<FollowToggleResponse> followOrUnfollow(
             @PathVariable("id") Long id,
-            @RequestParam("meId") Long meId
+            @RequestParam("googleId") String googleId
     ) {
-        return ResponseEntity.ok(followService.toggle(meId, id));
+        return ResponseEntity.ok(followService.toggle(googleId, id));
     }
 }

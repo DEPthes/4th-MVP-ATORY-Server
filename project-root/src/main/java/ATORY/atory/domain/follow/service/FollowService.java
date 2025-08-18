@@ -28,27 +28,35 @@ public class FollowService {
         return followRepository.countFollowing(user);
     }
 
-    public FollowToggleResponse toggle(Long meId, Long id) {
+    public FollowToggleResponse toggle(String googleId, Long id) {
+        // 본인 조회
+        User me = userRepository.findByGoogleID(googleId)
+                .orElseThrow(() -> new MapperException(ErrorCode.SER_NOT_FOUND));
+
         // 자기 자신 팔로우 방지
-        if (meId.equals(id)) throw new MapperException(ErrorCode.SELF_FOLLOW_NOT_ALLOWED);
+        if (me.getId().equals(id)){
+            throw new MapperException(ErrorCode.SELF_FOLLOW_NOT_ALLOWED);
+        }
 
         // 대상 유저 존재 여부 확인
-        if (!userRepository.existsById(id)) throw new MapperException(ErrorCode.SER_NOT_FOUND);
+        if (!userRepository.existsById(id)){
+            throw new MapperException(ErrorCode.SER_NOT_FOUND);
+        }
 
         // 현재 팔로우 상태 확인
-        boolean existed = followRepository.existsByFollower_IdAndFollowing_Id(meId, id);
+        boolean existed = followRepository.existsByFollower_IdAndFollowing_Id(me.getId(), id);
 
         if (existed) {
             // 이미 팔로우 상태 → 언팔
-            followRepository.deleteByFollower_IdAndFollowing_Id(meId, id);
+            followRepository.deleteByFollower_IdAndFollowing_Id(me.getId(), id);
         } else {
             // 팔로우 (DB에서 엔티티 전체 SELECT 없이 프록시로 참조)
-            User meRef = userRepository.getReferenceById(meId);
+            User meRef = userRepository.getReferenceById(me.getId());
             User targetRef = userRepository.getReferenceById(id);
             try {
                 followRepository.save(new Follow(meRef, targetRef));
             } catch (DataIntegrityViolationException e) {
-                // 유니크 충돌 등: 이미 팔로우된 경우
+                // 유니크 충돌 이미 팔로우된 경우
                 throw new MapperException(ErrorCode.FOLLOW_CONFLICT);
             }
         }

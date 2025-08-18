@@ -8,7 +8,12 @@ import lombok.NoArgsConstructor;
 @Entity
 @NoArgsConstructor
 @Getter
-@Table(name = "Follow")
+@Table(
+        name = "Follow",
+        uniqueConstraints = {
+                @UniqueConstraint(columnNames = {"follower_id", "following_id"})
+        }
+)
 public class Follow {
 
     @Id
