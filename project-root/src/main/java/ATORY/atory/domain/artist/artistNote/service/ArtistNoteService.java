@@ -1,6 +1,7 @@
 package ATORY.atory.domain.artist.artistNote.service;
 
 import ATORY.atory.domain.artist.artistNote.dto.ArtistNoteDto;
+import ATORY.atory.domain.artist.artistNote.dto.ArtistNoteSaveDto;
 import ATORY.atory.domain.artist.artistNote.entity.ArtistNote;
 import ATORY.atory.domain.artist.artistNote.repository.ArtistNoteRepository;
 import ATORY.atory.domain.artist.dto.ArtistDto;
@@ -71,5 +72,45 @@ public class ArtistNoteService {
         }
 
         return result;
+    }
+
+    //작가 노트 저장
+    public Boolean saveArtistNote(ArtistNoteSaveDto artistNoteSaveDto, String googleID){
+        User user = userRepository.findByGoogleID(googleID).orElseThrow(() -> new MapperException(ErrorCode.SER_NOT_FOUND));
+        Artist artist = artistRepository.findById(user.getId()).orElseThrow(() -> new MapperException(ErrorCode.SER_NOT_FOUND));
+
+        artistNoteRepository.save(ArtistNote.builder()
+                        .artist(artist)
+                        .artistNoteType(artistNoteSaveDto.getArtistNoteType())
+                        .year(artistNoteSaveDto.getYear())
+                        .description(artistNoteSaveDto.getDescription())
+                .build());
+
+        return true;
+    }
+
+    //작가 노트 수정
+    public Boolean updateArtistNote(Long artistNoteId, String googleID, ArtistNoteSaveDto artistNoteSaveDto){
+        User user = userRepository.findByGoogleID(googleID).orElseThrow(() -> new MapperException(ErrorCode.SER_NOT_FOUND));
+
+        Optional<ArtistNote> artistNote = artistNoteRepository.findById(artistNoteId);
+
+        if (artistNote.isPresent()){
+           ArtistNote artistNoteEntity = artistNote.get();
+           artistNoteEntity.update(artistNoteSaveDto);
+           artistNoteRepository.save(artistNoteEntity);
+        }
+
+        return true;
+    }
+
+    public Boolean deleteArtistNote(Long artistNoteId){
+        Optional<ArtistNote> artistNote = artistNoteRepository.findById(artistNoteId);
+
+        if (artistNote.isPresent()){
+            artistNoteRepository.delete(artistNote.get());
+        }
+
+        return true;
     }
 }

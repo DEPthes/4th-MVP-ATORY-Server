@@ -1,5 +1,6 @@
 package ATORY.atory.domain.artist.artistNote.entity;
 
+import ATORY.atory.domain.artist.artistNote.dto.ArtistNoteSaveDto;
 import ATORY.atory.domain.artist.entity.Artist;
 import jakarta.persistence.*;
 import lombok.Builder;
@@ -32,5 +33,11 @@ public class ArtistNote {
         this.artistNoteType = artistNoteType;
         this.year = year;
         this.description = description;
+    }
+
+    public void update(ArtistNoteSaveDto artistNoteSaveDto) {
+        this.artistNoteType = artistNoteSaveDto.getArtistNoteType();
+        this.year = artistNoteSaveDto.getYear();
+        this.description = artistNoteSaveDto.getDescription();
     }
 }
