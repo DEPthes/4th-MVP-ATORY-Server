@@ -1,11 +1,21 @@
 package ATORY.atory.domain.follow.controller;
 
+import ATORY.atory.domain.follow.dto.FollowToggleResponse;
+import ATORY.atory.domain.follow.service.FollowService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("api/follow")
 public class FollowController {
+    private final FollowService followService;
+    @PostMapping("/{id}/follow")
+    public ResponseEntity<FollowToggleResponse> followOrUnfollow(
+            @PathVariable("id") Long id,
+            @RequestParam("meId") Long meId
+    ) {
+        return ResponseEntity.ok(followService.toggle(meId, id));
+    }
 }
