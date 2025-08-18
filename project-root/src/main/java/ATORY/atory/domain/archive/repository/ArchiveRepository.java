@@ -12,4 +12,7 @@ public interface ArchiveRepository extends JpaRepository<Archive, Long> {
     @Query("SELECT COUNT(a) FROM Archive a WHERE a.post.id = :postId")
     long countByPostId(@Param("postId") Long postId);
 
+    @Query("SELECT COUNT(a) > 0 FROM Archive a WHERE a.user.id = :userId AND a.post.id = :postId")
+    boolean existsByUserIdAndPostId(@Param("userId") Long userId, @Param("postId") Long postId);
+
 }

@@ -238,6 +238,7 @@ public class PostService {
         dto.setPostType(post.getPostType());
         dto.setTitle(post.getName());
         dto.setUserName(post.getUser().getUsername());
+        dto.setIsArchived(archiveRepository.existsByUserIdAndPostId(currentUserId, post.getId()));
 
         // 이미지 파싱
         try {
@@ -265,8 +266,9 @@ public class PostService {
     }
 
     //게시물 상세 페이지 조회
-    public PostDto loadPost(Long postId) {
+    public PostDto loadPost(Long postId, String googleID) {
         Post post = postRepository.findById(postId).orElseThrow(() -> new MapperException(ErrorCode.INTERNAL_SERVER_ERROR));
+        User currentUser = userRepository.findByGoogleID(googleID).orElseThrow(() -> new MapperException(ErrorCode.SER_NOT_FOUND));
 
         long archiveCount = archiveRepository.countByPostId(post.getId());
 
@@ -313,6 +315,8 @@ public class PostService {
         postDto.setName(post.getName());
         postDto.setImageURL(imageUrls);
         postDto.setPostDate(PostDateDto.from(postDateRepository.findByPostId(post.getId())));
+        postDto.setIsMine(post.getUser().getGoogleID().equals(googleID));
+        postDto.setIsArchived(archiveRepository.existsByUserIdAndPostId(currentUser.getId(), post.getId()));
         postDto.setTags(tags);
 
         return postDto;
