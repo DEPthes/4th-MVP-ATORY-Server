@@ -66,5 +66,47 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             @Param("postType") PostType postType,
             Pageable pageable
     );
+
+    // 전체 조회 (검색 + 최신순)
+    @Query("""
+    SELECT p
+    FROM Post p
+    JOIN FETCH p.user u
+    JOIN PostDate pd ON pd.post = p
+    WHERE p.postType = :postType
+      AND (
+          :keyword IS NULL
+          OR :keyword = ''
+          OR LOWER(p.name) LIKE LOWER(CONCAT('%', :keyword, '%'))
+          OR LOWER(p.description) LIKE LOWER(CONCAT('%', :keyword, '%'))
+      )
+    ORDER BY pd.createdAt DESC
+""")
+    Page<Post> searchAllOrderByCreatedAtDesc(@Param("postType") PostType postType,
+                                             @Param("keyword") String keyword,
+                                             Pageable pageable);
+
+    // 태그별 조회 (검색 + 최신순)
+    @Query("""
+    SELECT DISTINCT p
+    FROM Post p
+    JOIN FETCH p.user u
+    JOIN PostDate pd ON pd.post = p
+    JOIN TagPost tp ON tp.post = p
+    JOIN Tag t ON tp.tag = t
+    WHERE t.name = :tagName
+      AND p.postType = :postType
+      AND (
+          :keyword IS NULL
+          OR :keyword = ''
+          OR LOWER(p.name) LIKE LOWER(CONCAT('%', :keyword, '%'))
+          OR LOWER(p.description) LIKE LOWER(CONCAT('%', :keyword, '%'))
+      )
+    ORDER BY pd.createdAt DESC
+""")
+    Page<Post> searchByTagNameOrderByCreatedAtDesc(@Param("tagName") String tagName,
+                                                   @Param("postType") PostType postType,
+                                                   @Param("keyword") String keyword,
+                                                   Pageable pageable);
 }
 

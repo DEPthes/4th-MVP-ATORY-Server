@@ -64,4 +64,26 @@ public class PostController {
     public ApiResult<PostDto> getPostDetail(@RequestParam Long postID, @RequestParam String googleID){
         return ApiResult.ok(postService.loadPost(postID, googleID));
     }
+
+    @Operation(summary = "게시물 검색", description = "게시물 타입에 따라 검색 게시물 다름")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "성공적으로 확인됨"),
+            @ApiResponse(responseCode = "400", description = "잘못된 입력 값"),
+            @ApiResponse(responseCode = "500", description = "서버 오류 발생")
+    })
+    @GetMapping("/search")
+    public ApiResult<Page<PostListDto>> getSearchPosts(@RequestParam(defaultValue = "0") int page,
+                                                     @RequestParam(defaultValue = "10") int size,
+                                                     @RequestParam String googleID,
+                                                     @RequestParam(defaultValue = "ALL") String tagName,
+                                                     @RequestParam PostType postType,
+                                                       @RequestParam String text
+                                                       ){
+
+        Pageable pageable = PageRequest.of(page, size);
+
+        Page<PostListDto> posts = postService.searchPosts(pageable, googleID, tagName, postType, text);
+
+        return ApiResult.ok(posts);
+    }
 }

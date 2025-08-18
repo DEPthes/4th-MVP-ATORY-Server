@@ -321,4 +321,17 @@ public class PostService {
 
         return postDto;
     }
+
+    public Page<PostListDto> searchPosts(Pageable pageable, String googleID, String tag, PostType postType, String text) {
+        User currentUser = userRepository.findByGoogleID(googleID).orElseThrow(() -> new MapperException(ErrorCode.SER_NOT_FOUND));
+
+        Page<Post> posts;
+        if (Objects.equals(tag, "ALL")) {
+            posts = postRepository.searchAllOrderByCreatedAtDesc(postType, text, pageable);
+        } else {
+            posts = postRepository.searchByTagNameOrderByCreatedAtDesc(tag, postType, text, pageable);
+        }
+
+        return posts.map(post -> toDto(post, currentUser.getId()));
+    }
 }
