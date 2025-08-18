@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("api/artist_note")
 @RequiredArgsConstructor
@@ -35,5 +37,16 @@ public class ArtistNoteController {
         Pageable pageable = PageRequest.of(page, size);
 
         return ApiResult.ok(artistNoteService.loadArtistNotes(pageable, googleID));
+    }
+
+    @Operation(summary = "작가 노트 조회", description = "작가 노트 조회")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "성공적으로 확인됨"),
+            @ApiResponse(responseCode = "400", description = "잘못된 입력 값"),
+            @ApiResponse(responseCode = "500", description = "서버 오류 발생")
+    })
+    @GetMapping("")
+    public ApiResult<List<ArtistNoteDto>> getArtistNotes(@RequestParam String googleID, @RequestParam Long userID){
+        return ApiResult.ok(artistNoteService.loadArtistNote(googleID, userID));
     }
 }
