@@ -40,6 +40,7 @@ dependencies {
 	implementation 'io.netty:netty-resolver-dns-native-macos:4.1.99.Final:osx-aarch_64'
 	implementation 'net.nurigo:sdk:4.2.7'
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+	implementation 'software.amazon.awssdk:s3:2.20.49'
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
