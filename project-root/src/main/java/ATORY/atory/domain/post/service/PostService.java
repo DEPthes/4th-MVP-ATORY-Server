@@ -423,4 +423,18 @@ public class PostService {
 
         return true;
     }
+
+    //메인페이지 게시글 조회
+    public Page<PostListDto> loadPostsByUser(Pageable pageable, String googleID, String tag, PostType postType, Long userID) {
+        User currentUser = userRepository.findByGoogleID(googleID).orElseThrow(() -> new MapperException(ErrorCode.SER_NOT_FOUND));
+
+        Page<Post> posts;
+        if (Objects.equals(tag, "ALL")) {
+            posts = postRepository.findByUserOrderByCreatedAtDesc(userID, postType, pageable);
+        } else {
+            posts = postRepository.findByUserAndTagNameOrderByCreatedAtDesc(userID, tag, postType, pageable);
+        }
+
+        return posts.map(post -> toDto(post, currentUser.getId()));
+    }
 }
