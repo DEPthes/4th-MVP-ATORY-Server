@@ -144,5 +144,22 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             @Param("postType") PostType postType,
             Pageable pageable
     );
+
+    // 내가 아카이브한 게시글 (최신순 + 타입별)
+    @Query("""
+    SELECT p
+    FROM Archive a
+    JOIN a.post p
+    JOIN a.user u
+    JOIN PostDate pd ON pd.post = p
+    WHERE u.id = :userId
+      AND p.postType = :postType
+    ORDER BY pd.createdAt DESC
+""")
+    Page<Post> findArchivedPostsByUserAndPostType(
+            @Param("userId") Long userId,
+            @Param("postType") PostType postType,
+            Pageable pageable
+    );
 }
 

@@ -109,7 +109,7 @@ public class PostController {
         return ApiResult.ok(postService.changePost(postID, googleID, postSaveDto));
     }
 
-    @Operation(summary = "게시물 조회", description = "게시물 조회 타입 및 유저에 따라 조회 게시물 다름")
+    @Operation(summary = "유저 게시물 조회", description = "게시물 조회 타입, 유저, 태그에 따라 조회 게시물 다름")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공적으로 확인됨"),
             @ApiResponse(responseCode = "400", description = "잘못된 입력 값"),
@@ -126,6 +126,26 @@ public class PostController {
         Pageable pageable = PageRequest.of(page, size);
 
         Page<PostListDto> posts = postService.loadPostsByUser(pageable, googleID, tagName, postType, userID);
+
+        return ApiResult.ok(posts);
+    }
+
+    @Operation(summary = "유저 아카이브 게시물 조회", description = "게시물 조회 타입 및 유저에 따라 조회 게시물 다름")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "성공적으로 확인됨"),
+            @ApiResponse(responseCode = "400", description = "잘못된 입력 값"),
+            @ApiResponse(responseCode = "500", description = "서버 오류 발생")
+    })
+    @GetMapping("/user/archived")
+    public ApiResult<Page<PostListDto>> getUserArchivedPosts(@RequestParam(defaultValue = "0") int page,
+                                                     @RequestParam(defaultValue = "10") int size,
+                                                     @RequestParam String googleID,
+                                                     @RequestParam Long userID,
+                                                     @RequestParam PostType postType){
+
+        Pageable pageable = PageRequest.of(page, size);
+
+        Page<PostListDto> posts = postService.loadArchivedPostsByUser(pageable, googleID, postType, userID);
 
         return ApiResult.ok(posts);
     }
