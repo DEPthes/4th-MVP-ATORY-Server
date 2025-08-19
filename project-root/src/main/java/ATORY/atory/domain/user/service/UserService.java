@@ -9,12 +9,14 @@ import ATORY.atory.domain.user.entity.User;
 import ATORY.atory.domain.user.repository.UserRepository;
 import ATORY.atory.global.exception.ErrorCode;
 import ATORY.atory.global.exception.MapperException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -25,6 +27,8 @@ public class UserService {
     private final UserRepository userRepository;
     private final FollowService followService;
     private final S3Service s3Service;
+
+    private final ObjectMapper objectMapper;
 
     public UserDto getById(Long Id){
         User user = userRepository.findById(Id).orElseThrow(() -> new MapperException(ErrorCode.SER_NOT_FOUND));
@@ -63,7 +67,7 @@ public class UserService {
             String key = "uploads/" + UUID.randomUUID();
             String url = s3Service.upload(file, key);
 
-            user.changeProfileImageURL(url);
+            user.changeProfileImageURL(objectMapper.writeValueAsString(List.of(url)));
             userRepository.save(user);
         } else {
             s3Service.delete(user.getProfileImageURL());
@@ -71,7 +75,7 @@ public class UserService {
             String key = "uploads/" + UUID.randomUUID();
             String url = s3Service.upload(file, key);
 
-            user.changeProfileImageURL(url);
+            user.changeProfileImageURL(objectMapper.writeValueAsString(List.of(url)));
             userRepository.save(user);
         }
 
@@ -86,7 +90,7 @@ public class UserService {
             String key = "uploads/" + UUID.randomUUID();
             String url = s3Service.upload(file, key);
 
-            user.changeCoverImageURL(url);
+            user.changeCoverImageURL(objectMapper.writeValueAsString(List.of(url)));
             userRepository.save(user);
         } else {
             s3Service.delete(user.getCoverImageURL());
@@ -94,7 +98,7 @@ public class UserService {
             String key = "uploads/" + UUID.randomUUID();
             String url = s3Service.upload(file, key);
 
-            user.changeCoverImageURL(url);
+            user.changeCoverImageURL(objectMapper.writeValueAsString(List.of(url)));
             userRepository.save(user);
         }
 
