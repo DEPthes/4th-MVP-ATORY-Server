@@ -108,5 +108,58 @@ public interface PostRepository extends JpaRepository<Post, Long> {
                                                    @Param("postType") PostType postType,
                                                    @Param("keyword") String keyword,
                                                    Pageable pageable);
+
+    // 특정 유저 + 전체 조회 (최신순)
+    @Query("""
+    SELECT p
+    FROM Post p
+    JOIN FETCH p.user u
+    JOIN PostDate pd ON pd.post = p
+    WHERE p.postType = :postType
+      AND u.id = :userId
+    ORDER BY pd.createdAt DESC
+""")
+    Page<Post> findByUserOrderByCreatedAtDesc(
+            @Param("userId") Long userId,
+            @Param("postType") PostType postType,
+            Pageable pageable
+    );
+
+    // 특정 유저 + 태그별 조회 (최신순)
+    @Query("""
+    SELECT DISTINCT p
+    FROM Post p
+    JOIN FETCH p.user u
+    JOIN PostDate pd ON pd.post = p
+    JOIN TagPost tp ON tp.post = p
+    JOIN Tag t ON tp.tag = t
+    WHERE t.name = :tagName
+      AND p.postType = :postType
+      AND u.id = :userId
+    ORDER BY pd.createdAt DESC
+""")
+    Page<Post> findByUserAndTagNameOrderByCreatedAtDesc(
+            @Param("userId") Long userId,
+            @Param("tagName") String tagName,
+            @Param("postType") PostType postType,
+            Pageable pageable
+    );
+
+    // 내가 아카이브한 게시글 (최신순 + 타입별)
+    @Query("""
+    SELECT p
+    FROM Archive a
+    JOIN a.post p
+    JOIN a.user u
+    JOIN PostDate pd ON pd.post = p
+    WHERE u.id = :userId
+      AND p.postType = :postType
+    ORDER BY pd.createdAt DESC
+""")
+    Page<Post> findArchivedPostsByUserAndPostType(
+            @Param("userId") Long userId,
+            @Param("postType") PostType postType,
+            Pageable pageable
+    );
 }
 
