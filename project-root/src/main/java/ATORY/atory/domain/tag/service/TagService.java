@@ -1,5 +1,6 @@
 package ATORY.atory.domain.tag.service;
 
+import ATORY.atory.domain.post.entity.PostType;
 import ATORY.atory.domain.tag.dto.TagDto;
 import ATORY.atory.domain.tag.entity.Tag;
 import ATORY.atory.domain.tag.entity.TagPost;
@@ -35,5 +36,11 @@ public class TagService {
         }
 
         return tagDtos;
+    }
+
+    //유저별 타입별 태그 조회
+    public List<TagDto> loadTagsByUser(Long userId, PostType postType) {
+        List<Tag> tags = tagPostRepository.findTagsByUserAndPostType(userId, postType);
+        return TagDto.from(tags); // 여기서 엔티티 → DTO 변환
     }
 }
