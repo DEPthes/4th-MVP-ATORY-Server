@@ -1,5 +1,6 @@
 package ATORY.atory.domain.artist.dto;
 
+import ATORY.atory.domain.user.dto.ProfileDetailDto;
 import ATORY.atory.global.dto.UserType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
@@ -9,7 +10,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-public class ArtistDetailDto {
+public class ArtistDetailDto implements ProfileDetailDto {
     private Long ArtistID;
     private String name;
     private UserType userType;
