@@ -46,9 +46,12 @@ public class FollowController {
     @GetMapping("/{id}/followers")
     public ResponseEntity<List<FollowUserDto>> getAllFollowers(
             @Parameter(description = "유저 ID", example = "5")
-            @PathVariable Long id
+            @PathVariable Long id,
+
+            @Parameter(description = "내 Google ID", example = "example@gmail.com")
+            @RequestParam("googleId") String googleId
     ) {
-        return ResponseEntity.ok(followService.getAllFollowers(id));
+        return ResponseEntity.ok(followService.getAllFollowers(googleId, id));
     }
     @Operation(summary = "팔로잉 리스트 조회", description = "특정 유저가 팔로우한 유저 목록을 ㄱㄴㄷ 순으로 조회합니다.")
     @ApiResponses(value = {
@@ -58,8 +61,11 @@ public class FollowController {
     @GetMapping("/{id}/following")
     public ResponseEntity<List<FollowUserDto>> getAllFollowing(
             @Parameter(description = "유저 ID", example = "5")
-            @PathVariable Long id
+            @PathVariable Long id,
+
+            @Parameter(description = "내 Google ID", example = "example@gmail.com")
+            @RequestParam("googleId") String googleId
     ) {
-        return ResponseEntity.ok(followService.getAllFollowing(id));
+        return ResponseEntity.ok(followService.getAllFollowing(googleId, id));
     }
 }
