@@ -6,6 +6,7 @@ import ATORY.atory.domain.collector.dto.CollectorDetailDto;
 import ATORY.atory.domain.collector.dto.CollectorRegisterDto;
 import ATORY.atory.domain.gallery.dto.GalleryDetailDto;
 import ATORY.atory.domain.gallery.dto.GalleryRegisterDto;
+import ATORY.atory.domain.user.dto.ProfileDetailDto;
 import ATORY.atory.domain.user.dto.UserInfoSideDto;
 import ATORY.atory.domain.user.service.UserDetailService;
 import ATORY.atory.domain.user.service.UserRegisterService;
@@ -13,6 +14,8 @@ import ATORY.atory.domain.user.service.UserService;
 import ATORY.atory.global.dto.ApiResult;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
@@ -138,36 +141,16 @@ public class UserController {
         return ApiResult.ok(userRegisterService.changeProfileGallery(googleID, galleryRegisterDto));
     }
 
-    @Operation(summary = "아티스트 프로필 조회", description = "아티스트 프로필 조회")
+    @Operation(summary = "유저 프로필 조회", description = "유저 프로필 조회")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "성공적으로 확인됨"),
+            @ApiResponse(responseCode = "200", description = "성공적으로 확인됨" ,content = @Content(
+                    schema = @Schema(oneOf = {ArtistDetailDto.class, CollectorDetailDto.class, GalleryDetailDto.class})
+            )),
             @ApiResponse(responseCode = "400", description = "잘못된 입력 값"),
             @ApiResponse(responseCode = "500", description = "서버 오류 발생")
     })
-    @GetMapping("/profile/artist")
-    public ApiResult<ArtistDetailDto> getProfileArtist(@RequestParam String googleID, @RequestParam Long userID) throws JsonProcessingException {
-        return ApiResult.ok(userDetailService.loadArtistDetail(googleID, userID));
-    }
-
-    @Operation(summary = "콜렉터 프로필 조회", description = "콜렉터 프로필 조회")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "성공적으로 확인됨"),
-            @ApiResponse(responseCode = "400", description = "잘못된 입력 값"),
-            @ApiResponse(responseCode = "500", description = "서버 오류 발생")
-    })
-    @GetMapping("/profile/collector")
-    public ApiResult<CollectorDetailDto> getProfileCollector(@RequestParam String googleID, @RequestParam Long userID) throws JsonProcessingException {
-        return ApiResult.ok(userDetailService.loadCollectorDetail(googleID, userID));
-    }
-
-    @Operation(summary = "갤러리 프로필 조회", description = "갤러리 프로필 조회")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "성공적으로 확인됨"),
-            @ApiResponse(responseCode = "400", description = "잘못된 입력 값"),
-            @ApiResponse(responseCode = "500", description = "서버 오류 발생")
-    })
-    @GetMapping("/profile/gallery")
-    public ApiResult<GalleryDetailDto> getProfileGallery(@RequestParam String googleID, @RequestParam Long userID) throws JsonProcessingException {
-        return ApiResult.ok(userDetailService.loadGalleryDetail(googleID, userID));
+    @GetMapping("/profile")
+    public ApiResult<ProfileDetailDto> getProfile(@RequestParam String googleID, @RequestParam Long userId) throws JsonProcessingException {
+        return ApiResult.ok(userDetailService.loadProfile(googleID, userId));
     }
 }
