@@ -61,7 +61,7 @@ public class UserDetailService {
         dto.setContact(targetUser.getContact());
         dto.setEmail(targetUser.getEmail());
 
-        dto.setIsMe(targetUser.equals(requester));
+        dto.setIsMe(targetUser.getId().equals(requester.getId()));
     }
 
     //아티스트 유저 정보 조회
