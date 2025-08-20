@@ -36,8 +36,7 @@ public class FollowService {
      */
     public FollowToggleResponse toggle(String googleId, Long id) {
         // 본인 조회
-        User me = userRepository.findByGoogleID(googleId)
-                .orElseThrow(() -> new MapperException(ErrorCode.SER_NOT_FOUND));
+        User me = getUserByGoogleId(googleId);
 
         // 자기 자신 팔로우 방지
         if (me.getId().equals(id)){
@@ -79,7 +78,8 @@ public class FollowService {
     /**
      * 전체 팔로워 조회
      */
-    public List<FollowUserDto> getAllFollowers(Long id) {
+    public List<FollowUserDto> getAllFollowers(String googleId, Long id) {
+        User me = getUserByGoogleId(googleId);
         validateUserExists(id);
         return followRepository.findAllFollowersOf(id).stream()
                 .map(this::toDto)
@@ -89,7 +89,8 @@ public class FollowService {
     /**
      * 전체 팔로잉 조회
      */
-    public List<FollowUserDto> getAllFollowing(Long id) {
+    public List<FollowUserDto> getAllFollowing(String googleId, Long id) {
+        User me = getUserByGoogleId(googleId);
         validateUserExists(id);
         return followRepository.findAllFollowingOf(id).stream()
                 .map(this::toDto)
@@ -97,12 +98,20 @@ public class FollowService {
     }
 
     /**
-     * 유저 존재 여부 확인
+     * userId 기반 유저 존재 여부 확인
      */
     private void validateUserExists(Long userId) {
         if (!userRepository.existsById(userId)) {
             throw new MapperException(ErrorCode.SER_NOT_FOUND);
         }
+    }
+
+    /**
+     * Google ID 기반 유저 존재 여부 확인
+     */
+    private User getUserByGoogleId(String googleId) {
+        return userRepository.findByGoogleID(googleId)
+                .orElseThrow(() -> new MapperException(ErrorCode.SER_NOT_FOUND));
     }
 
     /**
