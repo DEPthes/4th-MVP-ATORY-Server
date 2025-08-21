@@ -78,7 +78,7 @@ public class ArtistNoteService {
     //작가 노트 저장
     public Boolean saveArtistNote(ArtistNoteSaveDto artistNoteSaveDto, String googleID){
         User user = userRepository.findByGoogleID(googleID).orElseThrow(() -> new MapperException(ErrorCode.SER_NOT_FOUND));
-        Artist artist = artistRepository.findById(user.getId()).orElseThrow(() -> new MapperException(ErrorCode.SER_NOT_FOUND));
+        Artist artist = artistRepository.findByUser(user);
 
         artistNoteRepository.save(ArtistNote.builder()
                         .artist(artist)
