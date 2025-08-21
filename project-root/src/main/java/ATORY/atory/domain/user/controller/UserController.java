@@ -81,7 +81,7 @@ public class UserController {
             @ApiResponse(responseCode = "500", description = "서버 오류 발생")
     })
     @GetMapping("/side/profile")
-    public ApiResult<UserInfoSideDto> getUserSideInfo (@RequestParam String google_id){
+    public ApiResult<UserInfoSideDto> getUserSideInfo (@RequestParam String google_id) throws JsonProcessingException {
         UserInfoSideDto result = userService.loadUserSideInfo(google_id);
 
         return ApiResult.ok(result);

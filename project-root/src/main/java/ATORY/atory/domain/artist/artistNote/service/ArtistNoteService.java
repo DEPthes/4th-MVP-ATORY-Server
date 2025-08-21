@@ -105,6 +105,7 @@ public class ArtistNoteService {
         return true;
     }
 
+    //작가 노트 삭제
     public Boolean deleteArtistNote(Long artistNoteId){
         Optional<ArtistNote> artistNote = artistNoteRepository.findById(artistNoteId);
 
