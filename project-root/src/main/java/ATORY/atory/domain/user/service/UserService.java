@@ -53,7 +53,7 @@ public class UserService {
 
         User user = userRepository.findByGoogleID(google_id).orElseThrow(() -> new MapperException(ErrorCode.SER_NOT_FOUND));
 
-        List<String> urls = objectMapper.readValue(user.getCoverImageURL(), new TypeReference<List<String>>() {});
+        List<String> urls = objectMapper.readValue(user.getProfileImageURL(), new TypeReference<List<String>>() {});
         String imageUrl = urls.get(0);
 
         return UserInfoSideDto.builder()
