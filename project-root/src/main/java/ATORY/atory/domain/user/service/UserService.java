@@ -53,8 +53,19 @@ public class UserService {
 
         User user = userRepository.findByGoogleID(google_id).orElseThrow(() -> new MapperException(ErrorCode.SER_NOT_FOUND));
 
-        List<String> urls = objectMapper.readValue(user.getProfileImageURL(), new TypeReference<List<String>>() {});
-        String imageUrl = urls.get(0);
+        String imageUrl = null;
+
+        try {
+            String profileImageURL = user.getProfileImageURL();
+            if (profileImageURL != null && !profileImageURL.isBlank()) {
+                List<String> urls = objectMapper.readValue(profileImageURL, new TypeReference<List<String>>() {});
+                if (urls != null && !urls.isEmpty()) {
+                    imageUrl = urls.get(0);
+                }
+            }
+        } catch (JsonProcessingException e) {
+            imageUrl = null;
+        }
 
         return UserInfoSideDto.builder()
                 .id(user.getId())
