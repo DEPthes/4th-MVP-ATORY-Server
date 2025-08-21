@@ -9,6 +9,7 @@ import ATORY.atory.domain.user.entity.User;
 import ATORY.atory.domain.user.repository.UserRepository;
 import ATORY.atory.global.exception.ErrorCode;
 import ATORY.atory.global.exception.MapperException;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
@@ -48,14 +49,17 @@ public class UserService {
     }
 
     //사이드 바 유저 정보 조회 로직
-    public UserInfoSideDto loadUserSideInfo(String google_id){
+    public UserInfoSideDto loadUserSideInfo(String google_id) throws JsonProcessingException {
 
         User user = userRepository.findByGoogleID(google_id).orElseThrow(() -> new MapperException(ErrorCode.SER_NOT_FOUND));
+
+        List<String> urls = objectMapper.readValue(user.getCoverImageURL(), new TypeReference<List<String>>() {});
+        String imageUrl = urls.get(0);
 
         return UserInfoSideDto.builder()
                 .id(user.getId())
                 .username(user.getUsername())
-                .profileImageURL(user.getProfileImageURL())
+                .profileImageURL(imageUrl)
                 .userType(user.getUserType())
                 .build();
     }
