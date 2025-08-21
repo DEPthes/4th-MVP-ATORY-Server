@@ -12,6 +12,9 @@ import ATORY.atory.domain.user.repository.UserRepository;
 import ATORY.atory.global.dto.UserType;
 import ATORY.atory.global.exception.ErrorCode;
 import ATORY.atory.global.exception.MapperException;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -31,6 +34,8 @@ public class ArtistNoteService {
     private final ArtistRepository artistRepository;
     private final UserRepository userRepository;
 
+    private final ObjectMapper objectMapper;
+
     public List<ArtistNote> getByArtistId(Long artistId){
         return artistNoteRepository.findByArtistId(artistId);
     }
@@ -42,15 +47,31 @@ public class ArtistNoteService {
         Long userId = currentUser.getId();
 
         return userRepository.findTopByUserTypeOrderByFollowerCountDesc(UserType.ARTIST, pageable)
-                .map(user -> new ArtistDto(
-                        user.getId(),
-                        user.getUsername(),
-                        user.getContact(),
-                        user.getIntroduction(),
-                        user.getEmail(),
-                        user.getProfileImageURL(),
-                        user.getId().equals(userId)
-                ));
+                .map(user -> {
+                    String imageUrl = null;
+
+                    try {
+                        String profileImageURL = user.getProfileImageURL();
+                        if (profileImageURL != null && !profileImageURL.isBlank()) {
+                            List<String> urls = objectMapper.readValue(profileImageURL, new TypeReference<List<String>>() {});
+                            if (urls != null && !urls.isEmpty()) {
+                                imageUrl = urls.get(0);
+                            }
+                        }
+                    } catch (JsonProcessingException e) {
+                        imageUrl = null;
+                    }
+
+                    return new ArtistDto(
+                            user.getId(),
+                            user.getUsername(),
+                            user.getContact(),
+                            user.getIntroduction(),
+                            user.getEmail(),
+                            imageUrl,
+                            user.getId().equals(userId)
+                    );
+                });
     }
 
     //작가 노트 조회
