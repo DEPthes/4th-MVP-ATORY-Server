@@ -95,7 +95,7 @@ public class PostController {
             @ApiResponse(responseCode = "500", description = "서버 오류 발생")
     })
     @DeleteMapping("/delete")
-    public ApiResult<Boolean> deletePost(@RequestParam Long postID, @RequestParam String googleID){
+    public ApiResult<Boolean> deletePost(@RequestParam Long postID, @RequestParam String googleID) throws JsonProcessingException {
         return ApiResult.ok(postService.deletePost(postID, googleID));
     }
 
