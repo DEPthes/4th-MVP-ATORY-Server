@@ -9,6 +9,7 @@ import ATORY.atory.domain.user.entity.User;
 import ATORY.atory.domain.user.repository.UserRepository;
 import ATORY.atory.global.exception.ErrorCode;
 import ATORY.atory.global.exception.MapperException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -70,7 +71,11 @@ public class UserService {
             user.changeProfileImageURL(objectMapper.writeValueAsString(List.of(url)));
             userRepository.save(user);
         } else {
-            s3Service.delete(user.getProfileImageURL());
+            List<String> urls = objectMapper.readValue(user.getCoverImageURL(), new TypeReference<List<String>>() {});
+            String imageUrl = urls.get(0);
+
+            String deleteKey = imageUrl.substring(imageUrl.indexOf("uploads/"));
+            s3Service.delete(deleteKey);
 
             String key = "uploads/" + UUID.randomUUID();
             String url = s3Service.upload(file, key);
@@ -93,7 +98,11 @@ public class UserService {
             user.changeCoverImageURL(objectMapper.writeValueAsString(List.of(url)));
             userRepository.save(user);
         } else {
-            s3Service.delete(user.getCoverImageURL());
+            List<String> urls = objectMapper.readValue(user.getCoverImageURL(), new TypeReference<List<String>>() {});
+            String imageUrl = urls.get(0);
+
+            String deleteKey = imageUrl.substring(imageUrl.indexOf("uploads/"));
+            s3Service.delete(deleteKey);
 
             String key = "uploads/" + UUID.randomUUID();
             String url = s3Service.upload(file, key);

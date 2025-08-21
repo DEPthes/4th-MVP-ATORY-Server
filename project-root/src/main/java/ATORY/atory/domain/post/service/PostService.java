@@ -338,9 +338,22 @@ public class PostService {
     }
 
     //게시물 삭제
-    public Boolean deletePost(Long postId, String googleID) {
+    public Boolean deletePost(Long postId, String googleID) throws JsonProcessingException {
         User currentUser = userRepository.findByGoogleID(googleID).orElseThrow(() -> new MapperException(ErrorCode.SER_NOT_FOUND));
         Post post = postRepository.findById(postId).orElseThrow(() -> new MapperException(ErrorCode.INTERNAL_SERVER_ERROR));
+
+        // 게시물 이미지 URL(JSON 문자열) -> List<String> 변환
+        if (post.getImageURL() != null && !post.getImageURL().isBlank()) {
+            List<String> urls = objectMapper.readValue(post.getImageURL(), new TypeReference<List<String>>() {});
+
+            for (String imageUrl : urls) {
+                if (imageUrl != null && imageUrl.contains("uploads/")) {
+                    String deleteKey = imageUrl.substring(imageUrl.indexOf("uploads/"));
+                    s3Service.delete(deleteKey);
+                }
+            }
+        }
+        postRepository.delete(post);
 
         PostDate postDate = postDateRepository.findByPostId(postId);
         postDateRepository.delete(postDate);
