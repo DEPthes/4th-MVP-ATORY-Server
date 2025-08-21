@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
@@ -29,8 +30,8 @@ public class PostController {
             @ApiResponse(responseCode = "400", description = "잘못된 입력 값"),
             @ApiResponse(responseCode = "500", description = "서버 오류 발생")
     })
-    @PostMapping("/upload")
-    public ApiResult<Boolean> save(@RequestBody PostSaveDto postSaveDto, @RequestParam String googleID) throws JsonProcessingException {
+    @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ApiResult<Boolean> save(@ModelAttribute PostSaveDto postSaveDto, @RequestParam String googleID) throws JsonProcessingException {
         return ApiResult.ok(postService.savePost(postSaveDto, googleID));
     }
 
@@ -104,8 +105,8 @@ public class PostController {
             @ApiResponse(responseCode = "400", description = "잘못된 입력 값"),
             @ApiResponse(responseCode = "500", description = "서버 오류 발생")
     })
-    @PostMapping("/change")
-    public ApiResult<Boolean> changePost(@RequestParam Long postID, @RequestParam String googleID, @RequestBody PostSaveDto postSaveDto) throws JsonProcessingException {
+    @PostMapping(value = "/change", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ApiResult<Boolean> changePost(@RequestParam Long postID, @RequestParam String googleID, @ModelAttribute PostSaveDto postSaveDto) throws JsonProcessingException {
         return ApiResult.ok(postService.changePost(postID, googleID, postSaveDto));
     }
 

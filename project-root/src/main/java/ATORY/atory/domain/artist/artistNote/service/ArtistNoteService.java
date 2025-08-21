@@ -56,7 +56,8 @@ public class ArtistNoteService {
     //작가 노트 조회
     public List<ArtistNoteDto> loadArtistNote(String googleID, Long userID){
         User user = userRepository.findByGoogleID(googleID).orElseThrow(() -> new MapperException(ErrorCode.SER_NOT_FOUND));
-        Artist artist = artistRepository.findById(userID).orElseThrow(() -> new MapperException(ErrorCode.SER_NOT_FOUND));
+        User artistUser = userRepository.findById(userID).orElseThrow(() -> new MapperException(ErrorCode.SER_NOT_FOUND));
+        Artist artist = artistRepository.findById(artistUser.getId()).orElseThrow(() -> new MapperException(ErrorCode.SER_NOT_FOUND));
 
         List<ArtistNote> artistNoteDtoList = artistNoteRepository.findByArtistId(artist.getId());
         List<ArtistNoteDto> result = new ArrayList<>();

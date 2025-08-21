@@ -21,6 +21,11 @@ spring:
       hibernate:
         jdbc:
           time_zone: 'Asia/Seoul'
+  servlet:
+    multipart:
+      max-file-size: 30MB
+      max-request-size: 200MB
+
 
 # 오류 처리
 server:
