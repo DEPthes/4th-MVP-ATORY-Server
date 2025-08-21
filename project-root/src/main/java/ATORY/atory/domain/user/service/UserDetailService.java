@@ -77,7 +77,7 @@ public class UserDetailService {
         dto.setBirth(artist.getBirth());
         dto.setEducationBackground(artist.getEducationBackground());
         dto.setDisclosureStatus(artist.getDisclosureStatus());
-        dto.setIsFollowed(followRepository.existsByFollower_IdAndFollowing_Id(requester.getId(), artist.getId()));
+        dto.setIsFollowed(followRepository.existsByFollower_IdAndFollowing_Id(requester.getId(), artist.getUser().getId()));
 
         return dto;
     }
@@ -95,7 +95,7 @@ public class UserDetailService {
         dto.setBirth(collector.getBirth());
         dto.setEducationBackground(collector.getEducationBackground());
         dto.setDisclosureStatus(collector.getDisclosureStatus());
-        dto.setIsFollowed(followRepository.existsByFollower_IdAndFollowing_Id(requester.getId(), collector.getId()));
+        dto.setIsFollowed(followRepository.existsByFollower_IdAndFollowing_Id(requester.getId(), collector.getUser().getId()));
 
         return dto;
     }
@@ -112,7 +112,7 @@ public class UserDetailService {
         dto.setGalleryID(gallery.getId());
         dto.setGalleryName(gallery.getName());
         dto.setLocation(gallery.getLocation());
-        dto.setIsFollowed(followRepository.existsByFollower_IdAndFollowing_Id(requester.getId(), gallery.getId()));
+        dto.setIsFollowed(followRepository.existsByFollower_IdAndFollowing_Id(requester.getId(), gallery.getUser().getId()));
 
         return dto;
     }
