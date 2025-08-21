@@ -19,6 +19,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -92,7 +93,7 @@ public class UserController {
             @ApiResponse(responseCode = "400", description = "잘못된 입력 값"),
             @ApiResponse(responseCode = "500", description = "서버 오류 발생")
     })
-    @PostMapping("/change/profile")
+    @PostMapping(value = "/change/profile", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResult<Boolean> changeProfileImage(@RequestParam String googleID, @RequestParam MultipartFile profileImage) throws IOException {
         return ApiResult.ok(userService.changeProfileImage(googleID, profileImage));
     }
@@ -103,7 +104,7 @@ public class UserController {
             @ApiResponse(responseCode = "400", description = "잘못된 입력 값"),
             @ApiResponse(responseCode = "500", description = "서버 오류 발생")
     })
-    @PostMapping("/change/cover")
+    @PostMapping(value = "/change/cover", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResult<Boolean> changeCoverImage(@RequestParam String googleID, @RequestParam MultipartFile profileImage) throws IOException {
         return ApiResult.ok(userService.changeCoverImage(googleID, profileImage));
     }
