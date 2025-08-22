@@ -35,10 +35,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -204,13 +201,15 @@ public class PostService {
                         .modifiedAt(null)
                 .build());
 
-        //게시물 태그 저장
-        for (Long id : postDto.getTagIDs()){
-            Tag tag = tagRepository.findById(id).orElseThrow(() -> new MapperException(ErrorCode.SER_NOT_FOUND));
+        //게시글 태그
+        List<Long> tagIds = Optional.ofNullable(postDto.getTagIDs()).orElse(Collections.emptyList());
+        for (Long id : tagIds) {
+            Tag tag = tagRepository.findById(id)
+                    .orElseThrow(() -> new MapperException(ErrorCode.SER_NOT_FOUND));
 
             tagPostRepository.save(TagPost.builder()
-                            .post(post)
-                            .tag(tag)
+                    .post(post)
+                    .tag(tag)
                     .build());
         }
 
@@ -353,7 +352,6 @@ public class PostService {
                 }
             }
         }
-        postRepository.delete(post);
 
         PostDate postDate = postDateRepository.findByPostId(postId);
         postDateRepository.delete(postDate);
@@ -424,9 +422,11 @@ public class PostService {
         List<TagPost> tagPosts = tagPostRepository.findByPostId(postId);
         tagPostRepository.deleteAll(tagPosts);
 
-        //게시물 태그 저장
-        for (Long id : postDto.getTagIDs()){
-            Tag tag = tagRepository.findById(id).orElseThrow(() -> new MapperException(ErrorCode.SER_NOT_FOUND));
+        //게시글 태그
+        List<Long> tagIds = Optional.ofNullable(postDto.getTagIDs()).orElse(Collections.emptyList());
+        for (Long id : tagIds) {
+            Tag tag = tagRepository.findById(id)
+                    .orElseThrow(() -> new MapperException(ErrorCode.SER_NOT_FOUND));
 
             tagPostRepository.save(TagPost.builder()
                     .post(post)
